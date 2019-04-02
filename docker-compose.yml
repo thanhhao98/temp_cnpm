@@ -1,7 +1,7 @@
 version: "2"
 services:
   web:
-    image: thanhhao98/ilearn:1.0.0
+    image: thanhhao98/ilearn:1.1.0
     ports:
       - "8080:8080"
     depends_on:
@@ -11,6 +11,9 @@ services:
       - ./views:/usr/src/project/views
       - ./config:/usr/src/project/config
       - ./index.js:/usr/src/project/index.js
+      - ./package.json:/usr/src/project/package.json
+      - ./start.sh:/usr/src/project/start.sh
+    entrypoint: /usr/src/project/start.sh
   mysql:
     image: mysql:5.7.25
     command: --default-authentication-plugin=mysql_native_password
