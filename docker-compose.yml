@@ -1,0 +1,22 @@
+version: "2"
+services:
+  web:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    volumes:
+      - ./app:/usr/src/project/app
+      - ./views:/usr/src/project/views
+      - ./config:/usr/src/project/config
+      - ./index.js:/usr/src/project/index.js
+  mysql:
+    image: mysql:5.7.25
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      - MYSQL_ROOT_PASSWORD=Admin!123
+    volumes:
+      - ./dataBackup:/var/lib/mysql
+    ports:
+      - "3307:3306"
