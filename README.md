@@ -12,8 +12,5 @@ Source code hiện thực website phục vụ việc học online
 
 ## 3. Run
 
-### 3.1. Setup
-- Mac vs ubuntu: make built
-
-### 3.2. Run
+### 3.1. Run
 - Mac vs ubuntu: make run
