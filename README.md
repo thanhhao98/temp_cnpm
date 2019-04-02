@@ -10,6 +10,9 @@ Source code hiện thực website phục vụ việc học online
 - Windown version: https://hub.docker.com/editions/community/docker-ce-desktop-windows
 - Ubuntu: `sudo apt-get update && sudo apt-get upgrade && sudo apt-get install docker && sudo apt-get install docker-compose`
 
+### 2.1. Install package nodejs:
+- Thêm tên và version package vào `dependencies` trong file package.json
+
 ## 3. Run
 
 ### 3.1. Run
