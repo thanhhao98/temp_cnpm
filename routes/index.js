@@ -1,12 +1,5 @@
 const router = require('express').Router();
 
-const db =  [
-    {
-        id: 1,
-        title: "lunch",
-        description: "Go for lunc by 2pm"
-    }
-];
 router.get('/api/v1/todos', (req, res) => {
     data = {
         "Search": [
