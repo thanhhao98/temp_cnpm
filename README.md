@@ -7,7 +7,8 @@ Source code hiện thực website phục vụ việc học online
 
 ### 2.1. Cài đặt docker:
 - Mac version: https://hub.docker.com/editions/community/docker-ce-desktop-mac
-- Windown version: https://hub.docker.com/editions/community/docker-ce-desktop-windows
+- Window version: https://hub.docker.com/editions/community/docker-ce-desktop-windows
+Note: Sau khi cài docker cho window, vô setting docker enabled các ổ đĩa trong "Shared Drives"
 - Ubuntu:
 ```
 sudo apt-get update && sudo apt-get upgrade && sudo apt-get install docker && sudo apt-get install docker-compose
@@ -22,4 +23,8 @@ sudo apt-get update && sudo apt-get upgrade && sudo apt-get install docker && su
 - Mac vs ubuntu: 
 ```
 make run
+```
+- Windowns:
+```
+docker-compose up
 ```
