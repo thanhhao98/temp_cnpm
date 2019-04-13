@@ -1,5 +1,9 @@
 const router = require('express').Router();
 
+
+router.get('/',(req,res)=>{
+    res.status(200).send('<h1>hello woradfsadfasdf</h1>')
+})
 router.get('/api/v1/todos', (req, res) => {
     data = {
         "Search": [
