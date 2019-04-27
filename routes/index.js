@@ -2,7 +2,11 @@ const router = require('express').Router();
 
 
 router.get('/',(req,res)=>{
-    res.status(200).send('<h1>hello woradfsadfasdf</h1>')
+    res.status(200).send('<h1>hello </h1>');
+})
+
+router.get('/thanhhao',(req,res)=>{
+    res.status(200).send("ok");
 })
 router.get('/api/v1/todos', (req, res) => {
     data = {

@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
+const jwt = require('jsonwebtoken');
 const exphbs = require("express-handlebars");
 const passport     = require('passport');
 const flash        = require('connect-flash');
@@ -10,7 +11,7 @@ const session      = require('express-session');
 // Constants
 const config = require('./config/config.js')
 const router = require('./routes/index.js');
-
+require('./config/passport');
 
 // App
 app.use(bodyParser.urlencoded({extended:true}));
