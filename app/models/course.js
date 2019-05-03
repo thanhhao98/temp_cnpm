@@ -8,6 +8,8 @@ const Course = db.define('course',{
 	avt: { type: Sequelize.STRING},
     name: { type: Sequelize.STRING,notEmpty: true},
     image: { type: Sequelize.STRING,notEmpty: true},
+    title: { type: Sequelize.STRING,notEmpty: true},
+    description: { type: Sequelize.STRING ,notEmpty: true},
 	category: {type: Sequelize.ENUM('Development','Design','IT & Software','Personal Development'),defaultValue:'Development',allowNull: false },
 })
 Course.belongsTo(Admin);
