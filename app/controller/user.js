@@ -98,6 +98,23 @@ exports.checkValidUser =  (req, res, next) => {
         });
 };
 
+exports.deleteUserById  = (req, res, next) => {
+    User.destroy({ where: {id: req.body.userId }})
+      .then(result => {
+        res.status(200).json({
+            isSuccessfully: true,
+            message: "User deleted"
+        });
+      })
+      .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            isSuccessfully: false,
+            error: err
+        });
+      });
+};
+
 exports.createUser =  (req, res, next) => {
     User.findAll({ where: { email: req.body.email } })
     .then(user => {
