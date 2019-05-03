@@ -6,9 +6,9 @@ module.exports = {
     generateHash: function(password) {
         return bCrypt.hashSync(password, bCrypt.genSaltSync(8), null);
     },
-    numShowPerPage: 2,
+    numShowPerPage: 30,
     categories: [
-        'Development','Design','IT & Software','Personal Development'
+        'Development', 'Design', 'Bussiness', 'IT & Software', 'Personal Development', 'Marketing', 'Photography', 'Music'
     ],
     testDb : {
         "username": "root",
