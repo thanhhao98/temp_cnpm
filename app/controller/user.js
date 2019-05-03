@@ -23,12 +23,12 @@ exports.getInfoUser = (req,res,next) =>{
         }
         data = {
             id : user.id,
+            avt: user.avt,
             username : user.username,
             email : user.email,
             name : user.name,
             lastlogin : user.last_login,
             status : user.status,
-            isAdmin: user.isAdmin
         }
         return res.status(200).json({
             isSuccessfully: true,
@@ -46,10 +46,16 @@ exports.getInfoUser = (req,res,next) =>{
 exports.checkValidUser =  (req, res, next) => {
     User.findAll({ where: { email: req.body.email } })
         .then(user => {
-        if (user.length < 1) {
+        if (user.length != 1) {
             return res.status(401).json({
                 isSuccessfully: false,
                 message: "Auth failed"
+            });
+        }
+        if (user[0].status == "inactive"){
+            return res.status(401).json({
+                isSuccessfully: false,
+                message: "User is blocked"
             });
         }
         bcrypt.compare(req.body.password, user[0].password, (err, result) => {
@@ -63,6 +69,7 @@ exports.checkValidUser =  (req, res, next) => {
             const token = jwt.sign(
                 {
                     email: user[0].email,
+                    avt: user[0].avt,
                     userId: user[0].id,
                     username: user[0].username
                 },
@@ -108,10 +115,11 @@ exports.createUser =  (req, res, next) => {
             });
         } else {
             const user = new User({
-            email: req.body.email,
-            name: req.body.name,
-            username: req.body.username,
-            password: hash
+                avt: req.body.avt,
+                email: req.body.email,
+                name: req.body.name,
+                username: req.body.username,
+                password: hash
             });
             user
             .save()

@@ -40,9 +40,9 @@ app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
-app.use(router);
-app.use("/user", userRoutes);
-app.use("/admin", userRoutes);
+app.use("/api/v1",router);
+app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/admin", adminRoutes);
 
 
 // Check database
