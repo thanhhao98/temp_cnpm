@@ -9,9 +9,10 @@ const cookieParser = require('cookie-parser');
 const session      = require('express-session');
 const cors          = require('cors');
 // Constants
-const config = require('./app/config/config.js')
-const router = require('./app/routes/index.js');
-require('./app/config/passport');
+const config = require('./app/config/config')
+const router = require('./app/routes/index');
+const userRoutes = require('./app/routes/user');
+const adminRoutes = require('./app/routes/admin');
 
 
 // App
@@ -40,11 +41,13 @@ app.use(function(req, res, next) {
     next();
 });
 app.use(router);
+app.use("/user", userRoutes);
+app.use("/admin", userRoutes);
+
 
 // Check database
 var models = require("./app/models");
-require('./app/config/passport.js')(passport, models.user);
-models.sequelize.sync().then(function() {
+models.sync().then(function() {
     console.log('Nice! Database looks fine')
 }).catch(function(err) {
     console.log(err);
