@@ -1,11 +1,11 @@
 const router = require('express').Router();
 var userController = require("../controller/user");
-const checkAuth = require('../middleware/user-auth');
+const checkAuthUser = require('../middleware/user-auth');
 
-router.get("/info/:userId",checkAuth,userController.getInfoUser);
+router.get("/info/:userId",checkAuthUser,userController.getInfoUser);
 router.post("/login", userController.checkValidUser);
 router.post("/signup", userController.createUser);
-router.get('/logout',checkAuth,(req,res,next)=>{
+router.get('/logout',checkAuthUser,(req,res,next)=>{
     delete req.headers.authorization;
     res.status(200).send({
         isSuccessfully: false,
@@ -13,7 +13,7 @@ router.get('/logout',checkAuth,(req,res,next)=>{
     });
 })
 
-router.post('/private',checkAuth,(req,res,next)=>{
+router.post('/private',checkAuthUser,(req,res,next)=>{
     res.status(200).send('ok');
 })
 

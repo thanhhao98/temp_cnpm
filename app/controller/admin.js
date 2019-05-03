@@ -1,34 +1,33 @@
 var exports = module.exports = {}
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-var User = require("../models/user");
+var Admin = require("../models/admin");
 const secrectKey = require('../config/config').secrectKey;
 
-exports.getInfoUser = (req,res,next) =>{
+exports.getInfoAdmin = (req,res,next) =>{
     id = parseInt(req.params.userId);
-    User.findAll({ where: { id: id } })
-        .then(user => {
-        if (user.length != 1) {
+    Admin.findAll({ where: { id: id } })
+        .then(admin => {
+        if (admin.length != 1) {
             return res.status(401).json({
                 isSuccessfully: false,
                 message: "request failed"
             });
         }
-        user = user[0]
-        if (user.id != req.userData.userId){
+        admin = admin[0]
+        if (admin.id != req.userData.userId){
             return res.status(401).json({
                 isSuccessfully: false,
                 message: "auth fail"
             });
         }
         data = {
-            id : user.id,
-            avt: user.avt,
-            username : user.username,
-            email : user.email,
-            name : user.name,
-            lastlogin : user.last_login,
-            status : user.status,
+            id : admin.id,
+            avt: admin.avt,
+            username : admin.username,
+            email : admin.email,
+            name : admin.name,
+            lastlogin : admin.last_login,
         }
         return res.status(200).json({
             isSuccessfully: true,
@@ -43,22 +42,16 @@ exports.getInfoUser = (req,res,next) =>{
         });
         });
 }
-exports.checkValidUser =  (req, res, next) => {
-    User.findAll({ where: { email: req.body.email } })
-        .then(user => {
-        if (user.length != 1) {
+exports.checkValidAdmin =  (req, res, next) => {
+    Admin.findAll({ where: { email: req.body.email } })
+        .then(admin => {
+        if (admin.length != 1) {
             return res.status(401).json({
                 isSuccessfully: false,
                 message: "Auth failed"
             });
         }
-        if (user[0].status == "inactive"){
-            return res.status(401).json({
-                isSuccessfully: false,
-                message: "User is blocked"
-            });
-        }
-        bcrypt.compare(req.body.password, user[0].password, (err, result) => {
+        bcrypt.compare(req.body.password, admin[0].password, (err, result) => {
             if (err) {
             return res.status(401).json({
                 isSuccessfully: false,
@@ -68,10 +61,11 @@ exports.checkValidUser =  (req, res, next) => {
             if (result) {
             const token = jwt.sign(
                 {
-                    email: user[0].email,
-                    avt: user[0].avt,
-                    userId: user[0].id,
-                    username: user[0].username
+                    email: admin[0].email,
+                    isAdmin: true,
+                    avt: admin[0].avt,
+                    userId: admin[0].id,
+                    username: admin[0].username
                 },
                 secrectKey,
                 {
@@ -98,10 +92,10 @@ exports.checkValidUser =  (req, res, next) => {
         });
 };
 
-exports.createUser =  (req, res, next) => {
-    User.findAll({ where: { email: req.body.email } })
-    .then(user => {
-    if (user.length >= 1) {
+exports.createAdmin =  (req, res, next) => {
+    Admin.findAll({ where: { email: req.body.email } })
+    .then(admin => {
+    if (admin.length >= 1) {
         return res.status(409).json({
             isSuccessfully: false,
             message: "Mail exists"
@@ -114,19 +108,19 @@ exports.createUser =  (req, res, next) => {
                 error: err
             });
         } else {
-            const user = new User({
+            const admin = new Admin({
                 avt: req.body.avt,
                 email: req.body.email,
                 name: req.body.name,
                 username: req.body.username,
                 password: hash
             });
-            user
+            admin
             .save()
             .then(result => {
                 res.status(201).json({
                     isSuccessfully: true,
-                    message: "User created"
+                    message: "Admin created"
                 });
             })
             .catch(err => {

@@ -1,7 +1,19 @@
 const router = require('express').Router();
 const bcrypt = require("bcrypt");
 var User = require("../models/user")
-var userController = require("../controller/user")
+var Admin = require("../models/admin")
+var adminController = require("../controller/admin")
+const checkAuthAdmin = require('../middleware/admin-auth');
+router.post("/login", adminController.checkValidAdmin);
+router.post("/signup", adminController.createAdmin);
+
+router.get('/logout',checkAuthAdmin,(req,res,next)=>{
+    delete req.headers.authorization;
+    res.status(200).send({
+        isSuccessfully: false,
+        message: "logout successful",
+    });
+})
 
 router.delete("/deleteUserById", (req, res, next) => {
     User.destroy({ where: {id: req.body.userId }})
@@ -19,4 +31,8 @@ router.delete("/deleteUserById", (req, res, next) => {
         });
       });
 });
+
+router.post('/private',checkAuthAdmin,(req,res,next)=>{
+  res.status(200).send('ok');
+})
 module.exports = router;
