@@ -6,6 +6,7 @@ var courseController = require("../controller/course")
 const checkAuthAdmin = require('../middleware/admin-auth');
 
 router.get("/listCourse",checkAuthAdmin,adminController.getCourseOfAdmin);
+router.post("/approveSign",checkAuthAdmin,adminController.approveSign);
 router.post("/login", adminController.checkValidAdmin);
 router.post("/signup", adminController.createAdmin);
 router.post("/createCourse",checkAuthAdmin,courseController.createCourse);
