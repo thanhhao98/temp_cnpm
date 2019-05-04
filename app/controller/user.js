@@ -121,6 +121,10 @@ exports.checkValidUser =  (req, res, next) => {
             );
             return res.status(200).json({
                 isSuccessfully: true,
+                email: user[0].email,
+                avt: user[0].avt,
+                userId: user[0].id,
+                username: user[0].username,
                 message: "Auth successful",
                 token: token
             });

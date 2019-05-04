@@ -4,7 +4,6 @@ const jwt = require("jsonwebtoken");
 const Admin = require("../models/admin");
 const Course = require("../models/course");
 const UserAssingCourse = require("../models/userAssignCourse");
-const secrectKey = require('../config/config').secrectKey;
 const categories = require('../config/config').categories
 
 
@@ -165,6 +164,11 @@ exports.checkValidAdmin =  (req, res, next) => {
             );
             return res.status(200).json({
                 isSuccessfully: true,
+                email: admin[0].email,
+                isAdmin: true,
+                avt: admin[0].avt,
+                userId: admin[0].id,
+                username: admin[0].username,
                 message: "Auth successful",
                 token: token
             });
