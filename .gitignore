@@ -4,3 +4,4 @@ dbBackup
 .DS_Store
 dataBackup
 npm-debug.log
+docker-compose.yml
