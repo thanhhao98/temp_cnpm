@@ -28,7 +28,7 @@ exports.getAllCourses = (req,res,next) =>{
                 courseList: courseList,
             })
         } else {
-            return res.status(401).json({
+            return res.status(200).json({
                 isSuccessfully: false,
                 message: "request failed"
             });
@@ -46,7 +46,7 @@ exports.createCourse =  (req, res, next) => {
     Course.findAll({ where: { name: req.body.name } })
     .then(courses=>{
         if(courses.length>=1){
-            return res.status(409).json({
+            return res.status(200).json({
                 isSuccessfully: false,
                 message: "Course name exists"
             });
@@ -64,7 +64,7 @@ exports.createCourse =  (req, res, next) => {
         course
         .save()
         .then(result => {
-                res.status(201).json({
+                res.status(200).json({
                     isSuccessfully: true,
                     message: "Course created"
             });

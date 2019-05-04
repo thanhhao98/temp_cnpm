@@ -8,14 +8,14 @@ exports.getAllVideoWithCourseId = (req,res,next) => {
     Course.findAll({where: {id:courseId}})
     .then(courses => {
         if (courses.length != 1){
-            return res.status(401).json({
+            return res.status(200).json({
                 isSuccessfully: false,
                 message: "course is not exist"
             });
         }
         course = courses[0]
         if (course.adminId != idAdmin){
-            return res.status(401).json({
+            return res.status(200).json({
                 isSuccessfully: false,
                 message: "auth fail"
             });
@@ -62,14 +62,14 @@ exports.createVideo =  (req, res, next) => {
     Course.findAll({where: {id:courseId}})
     .then(courses => {
         if (courses.length != 1){
-            return res.status(401).json({
+            return res.status(200).json({
                 isSuccessfully: false,
                 message: "course is not exist"
             });
         }
         course = courses[0]
         if (course.adminId != idAdmin){
-            return res.status(401).json({
+            return res.status(200).json({
                 isSuccessfully: false,
                 message: "auth fail"
             });
@@ -84,7 +84,7 @@ exports.createVideo =  (req, res, next) => {
         video
         .save()
         .then(result => {
-            res.status(201).json({
+            res.status(200).json({
                 isSuccessfully: true,
                 message: "Video created"
             });
