@@ -7,7 +7,6 @@ const Course = require("../models/course");
 const Forum = require ("../models/forum");
 const UserAssignCourse = require("../models/userAssignCourse");
 const secrectKey = require('../config/config').secrectKey;
-const categories = require('../config/config').categories
 
 exports.getForumOfAdmin = (req,res,next) =>{
     id = req.userData.userId;
@@ -157,7 +156,6 @@ exports.getCourseOfAdmin = (req,res,next) =>{
         if(courseList.length>0){
             return res.status(200).json({
                 isSuccessfully: true,
-                categories: categories,
                 courseList: courseList,
             })
         } else {
