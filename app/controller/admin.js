@@ -54,7 +54,7 @@ exports.getUserWaitingInCourse = (req,res,next) =>{
     .then (courses =>{ 
         course = courses[0]
         if (course.adminId == id){
-            UserAssignCourse.findAll({where: {courseId: course.id}})
+            UserAssignCourse.findAll({where: {courseId: course.id,status:"waiting"}})
             .then (userAssignCourses => {
                 listUserId = []
                 for (i=0;i<userAssignCourses.length;i++){
@@ -89,8 +89,10 @@ exports.getUserWaitingInCourse = (req,res,next) =>{
             })
         }
         else{
-            isSuccessfully = false;
-            message: "Admin no ower course"
+            return res.status(200).json({
+                isSuccessfully: false,
+                message: "Admin no ower course"
+            });
         }
     })
 }
@@ -98,33 +100,27 @@ exports.getUserWaitingInCourse = (req,res,next) =>{
 exports.approveSign = (req,res,next) => {
     idSign = req.body.idSign;
     idAdmin = req.userData.userId;
-    UserAssingCourse.findAll({where: {id: idSign}})
+    UserAssignCourse.findAll({where: {id: idSign}})
     .then(signs => {
         sign = signs[0];
-        Course.findAll({where: {id: sign.courseId}})
+        Course.findAll({where: {id: sign.courseId,adminId:idAdmin}})
         .then(courses =>{
             course = courses[0]
-            if(idAdmin==course.adminId){
-                sign.status = 'approve';
-                sign.save()
-                .then(()=>{
-                    return res.status(200).json({
-                        isSuccessfully: true,
-                        message: 'approve sign successfully'
-                    })
+            sign.status = 'approve';
+            sign.save()
+            .then(()=>{
+                return res.status(200).json({
+                    isSuccessfully: true,
+                    message: 'approve sign successfully'
                 })
-                .catch(err=>{
-                    console.log(err);
-                    res.status(500).json({
-                        isSuccessfully: true,
-                        error: err
-                    });
-                })
-            }
-            res.status(200).json({
-                isSuccessfully: true,
-                message: 'auth fail'
-            });
+            })
+            .catch(err=>{
+                console.log(err);
+                res.status(500).json({
+                    isSuccessfully: false,
+                    error: err
+                });
+            })
         })
         .catch(err => {
             console.log(err);
