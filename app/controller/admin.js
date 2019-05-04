@@ -273,43 +273,44 @@ exports.checkValidAdmin =  (req, res, next) => {
 exports.createAdmin =  (req, res, next) => {
     Admin.findAll({ where: { email: req.body.email } })
     .then(admin => {
-    if (admin.length >= 1) {
-        return res.status(200).json({
-            isSuccessfully: false,
-            message: "Mail exists"
-        });
-    } else {
-        bcrypt.hash(req.body.password, 10, (err, hash) => {
-        if (err) {
-            return res.status(500).json({
+        
+        if (admin.length >= 1) {
+            return res.status(200).json({
                 isSuccessfully: false,
-                error: err
+                message: "Mail exists"
             });
         } else {
-            const admin = new Admin({
-                avt: req.body.avt,
-                email: req.body.email,
-                name: req.body.name,
-                username: req.body.username,
-                password: hash
-            });
-            admin
-            .save()
-            .then(result => {
-                res.status(200).json({
-                    isSuccessfully: true,
-                    message: "Admin created"
-                });
-            })
-            .catch(err => {
-                console.log(err);
-                res.status(500).json({
+            bcrypt.hash(req.body.password, 10, (err, hash) => {
+            if (err) {
+                return res.status(500).json({
                     isSuccessfully: false,
                     error: err
                 });
+            } else {
+                const admin = new Admin({
+                    avt: req.body.avt,
+                    email: req.body.email,
+                    name: req.body.name,
+                    username: req.body.username,
+                    password: hash
+                });
+                admin
+                .save()
+                .then(result => {
+                    res.status(200).json({
+                        isSuccessfully: true,
+                        message: "Admin created"
+                    });
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.status(500).json({
+                        isSuccessfully: false,
+                        error: err
+                    });
+                });
+            }
             });
         }
-        });
-    }
     });
 };

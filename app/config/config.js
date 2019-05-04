@@ -20,24 +20,4 @@ module.exports = {
     },
     PORT: process.env.PORT || 8080,
     secrectKey: "Admin!123977463hao.phanthanh98@gmail.com",
-    listTable : {
-        Account : [
-            "id",
-            "Name",
-            "Password",
-            "Phone",
-            "Email",
-            "Avatar",
-            "CreateAt",
-            "UpdateAt"
-        ],
-        Admin : [
-            'id',
-            'AccId',
-        ],
-        User : [
-            'id',
-            'AccId'
-        ]
-    }
 };
