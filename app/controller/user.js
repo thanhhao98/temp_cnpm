@@ -1,13 +1,52 @@
 var exports = module.exports = {}
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-var User = require("../models/user");
+const User = require("../models/user");
+const UserAssignCourse = require("../models/userAssignCourse");
 const secrectKey = require('../config/config').secrectKey;
 
+exports.userSignCourse = (req,res,next)=>{
+    userId = req.userData.userId;
+    courseId = req.body.courseId;
+    UserAssignCourse.findAll({ where: { userId: userId, courseId:courseId } })
+    .then(signs => {
+        if (signs.length > 0) {
+            return res.status(401).json({
+                isSuccessfully: false,
+                message: "user already signin course"
+            });
+        }
+        const sign = new UserAssignCourse({
+            userId: userId,
+            courseId:courseId
+        });
+        sign
+        .save()
+        .then(result => {
+            res.status(201).json({
+                isSuccessfully: true,
+                message: "User assign successfully"
+            });
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({
+                isSuccessfully: false,
+                error: err
+            });
+        });
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error: err
+        });
+    });
+}
 exports.getInfoUser = (req,res,next) =>{
     id = parseInt(req.params.userId);
     User.findAll({ where: { id: id } })
-        .then(user => {
+    .then(user => {
         if (user.length != 1) {
             return res.status(401).json({
                 isSuccessfully: false,
@@ -35,13 +74,13 @@ exports.getInfoUser = (req,res,next) =>{
             data: data,
             message: "successfully"
         });
-        })
-        .catch(err => {
+    })
+    .catch(err => {
         console.log(err);
         res.status(500).json({
             error: err
         });
-        });
+    });
 }
 exports.checkValidUser =  (req, res, next) => {
     User.findAll({ where: { email: req.body.email } })

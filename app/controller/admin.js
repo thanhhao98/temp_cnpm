@@ -1,9 +1,49 @@
 var exports = module.exports = {}
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-var Admin = require("../models/admin");
+const Admin = require("../models/admin");
+const Course = require("../models/course");
 const secrectKey = require('../config/config').secrectKey;
+const categories = require('../config/config').categories
 
+exports.getCourseOfAdmin = (req,res,next) =>{
+    id = req.userData.userId;
+    Course.findAll({where: {adminId: id}})
+    .then(courses => {
+        courseList = []
+        for(i=0;i<courses.length;i++){
+            course = courses[i]
+            courseList.push({
+                category: course.category,
+                avatar: course.avt,
+                name: course.name,
+                date: course.createdAt,
+                image: course.image,
+                title: course.title,
+            })
+        }
+        if(courseList.length>0){
+            return res.status(200).json({
+                sSuccessfully: true,
+                categories: categories,
+                courseList: courseList,
+            })
+        } else {
+            return res.status(401).json({
+                isSuccessfully: false,
+                message: "Admin owner no course"
+            });
+        }
+
+    })
+    .catch( err => {
+        console.log(err);
+        res.status(500).json({
+            error: err
+        });
+    }
+    )
+}
 exports.getInfoAdmin = (req,res,next) =>{
     id = parseInt(req.params.userId);
     Admin.findAll({ where: { id: id } })

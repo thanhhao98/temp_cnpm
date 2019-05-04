@@ -3,3 +3,4 @@ package-lock.json
 dbBackup
 .DS_Store
 dataBackup
+npm-debug.log
