@@ -39,6 +39,7 @@ exports.userSignCourse = (req,res,next)=>{
     .catch(err => {
         console.log(err);
         res.status(500).json({
+            isSuccessfully: false,
             error: err
         });
     });
@@ -78,6 +79,7 @@ exports.getInfoUser = (req,res,next) =>{
     .catch(err => {
         console.log(err);
         res.status(500).json({
+            isSuccessfully: false,
             error: err
         });
     });
@@ -119,6 +121,10 @@ exports.checkValidUser =  (req, res, next) => {
             );
             return res.status(200).json({
                 isSuccessfully: true,
+                email: user[0].email,
+                avt: user[0].avt,
+                userId: user[0].id,
+                username: user[0].username,
                 message: "Auth successful",
                 token: token
             });
@@ -132,6 +138,7 @@ exports.checkValidUser =  (req, res, next) => {
         .catch(err => {
         console.log(err);
         res.status(500).json({
+            isSuccessfully: false,
             error: err
         });
         });

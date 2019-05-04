@@ -59,6 +59,57 @@ exports.getUserWaitingInCourse = (req,res,next) =>{
     })
 }
 
+const UserAssingCourse = require("../models/userAssignCourse");
+const categories = require('../config/config').categories
+
+
+exports.approveSign = (req,res,next) => {
+    idSign = req.body.idSign;
+    idAdmin = req.userData.userId;
+    UserAssingCourse.findAll({where: {id: idSign}})
+    .then(signs => {
+        sign = signs[0];
+        Course.findAll({where: {id: sign.courseId}})
+        .then(courses =>{
+            course = courses[0]
+            if(idAdmin==course.adminId){
+                sign.status = 'approve';
+                sign.save()
+                .then(()=>{
+                    return res.status(200).json({
+                        isSuccessfully: true,
+                        message: 'approve sign successfully'
+                    })
+                })
+                .catch(err=>{
+                    console.log(err);
+                    res.status(500).json({
+                        isSuccessfully: true,
+                        error: err
+                    });
+                })
+            }
+            res.status(500).json({
+                isSuccessfully: true,
+                message: 'auth fail'
+            });
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({
+                isSuccessfully: false,
+                error: err
+            });
+        })
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            isSuccessfully: false,
+            error: err
+        });
+    })
+}
 exports.getCourseOfAdmin = (req,res,next) =>{
     id = req.userData.userId;
     Course.findAll({where: {adminId: id}})
@@ -92,6 +143,7 @@ exports.getCourseOfAdmin = (req,res,next) =>{
     .catch( err => {
         console.log(err);
         res.status(500).json({
+            isSuccessfully: false,
             error: err
         });
     }
@@ -131,6 +183,7 @@ exports.getInfoAdmin = (req,res,next) =>{
         .catch(err => {
         console.log(err);
         res.status(500).json({
+            isSuccessfully: true,
             error: err
         });
         });
@@ -167,6 +220,11 @@ exports.checkValidAdmin =  (req, res, next) => {
             );
             return res.status(200).json({
                 isSuccessfully: true,
+                email: admin[0].email,
+                isAdmin: true,
+                avt: admin[0].avt,
+                userId: admin[0].id,
+                username: admin[0].username,
                 message: "Auth successful",
                 token: token
             });
@@ -180,6 +238,7 @@ exports.checkValidAdmin =  (req, res, next) => {
         .catch(err => {
         console.log(err);
         res.status(500).json({
+            isSuccessfully: false,
             error: err
         });
         });
