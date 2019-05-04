@@ -17,7 +17,10 @@ exports.getForumOfAdmin = (req,res,next) =>{
         for(i=0;i<forums.length;i++){
             forum = forums[i]
             forumList.push({
+                id: forum.id,
+                adminId: id,
                 name: forum.name,
+                description: forum.description,
                 date: forum.createdAt,
             })
         }
