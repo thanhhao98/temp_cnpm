@@ -2,11 +2,58 @@ var exports = module.exports = {}
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Admin = require("../models/admin");
+const User = require ("../models/user");
 const Course = require("../models/course");
-const UserAssingCourse = require("../models/userAssignCourse");
+const UserAssignCourse = require("../models/userAssignCourse");
+const secrectKey = require('../config/config').secrectKey;
 const categories = require('../config/config').categories
-
-
+exports.getUserWaitingInCourse = (req,res,next) =>{
+    id = req.userData.userId;
+    courseId = req.params.courseId;
+    Course.findAll({where: {id: courseId}})
+    .then (courses =>{ 
+        course = courses[0]
+        if (course.adminId == id){
+            UserAssignCourse.findAll({where: {courseId: course.id}})
+            .then (userAssignCourses => {
+                listUserId = []
+                for (i=0;i<userAssignCourses.length;i++){
+                    listUserId.push(userAssignCourses[i].userId)
+                }
+                User.findAll({where: {id:listUserId}})
+                .then(users=>{
+                    listUserAssign = []
+                    for (i=0;i<users.length;i++){
+                        listUserAssign.push({
+                            id: users[i].id,
+                            name: users[i].name,
+                            username: users[i].username,
+                            avt: users[i].avt,
+                            email: users[i].email,
+                            courseId: courseId
+                        })
+                    }
+                    if (listUserAssign.length >0){
+                        return res.status(200).json({
+                            isSuccessfully: true,
+                            listUserAssign: listUserAssign
+                        });
+                    }
+                    else {
+                        return res.status(401).json({
+                            isSuccessfully: false,
+                            message: "no user waiting assign"
+                        });
+                    }
+                })
+            })
+        }
+        else{
+            isSuccessfully = false;
+            message: "Admin no ower course"
+        }
+    })
+}
 exports.approveSign = (req,res,next) => {
     idSign = req.body.idSign;
     idAdmin = req.userData.userId;

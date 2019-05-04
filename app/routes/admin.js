@@ -7,6 +7,7 @@ const videoController = require("../controller/video");
 const checkAuthAdmin = require('../middleware/admin-auth');
 router.post("/getAllVideoWithCourseId",checkAuthAdmin,videoController.getAllVideoWithCourseId);
 router.post("/createVideo",checkAuthAdmin,videoController.createVideo);
+router.get("/listUserWaitingInCourse/:courseId",checkAuthAdmin,adminController.getUserWaitingInCourse);
 router.get("/listCourse",checkAuthAdmin,adminController.getCourseOfAdmin);
 router.post("/approveSign",checkAuthAdmin,adminController.approveSign);
 router.post("/login", adminController.checkValidAdmin);
