@@ -4,9 +4,45 @@ const jwt = require("jsonwebtoken");
 const Admin = require("../models/admin");
 const User = require ("../models/user");
 const Course = require("../models/course");
+const Forum = require ("../models/forum");
 const UserAssignCourse = require("../models/userAssignCourse");
 const secrectKey = require('../config/config').secrectKey;
 const categories = require('../config/config').categories
+
+exports.getForumOfAdmin = (req,res,next) =>{
+    id = req.userData.userId;
+    Forum.findAll({where: {adminId: id}})
+    .then(forums => {
+        forumList = []
+        for(i=0;i<forums.length;i++){
+            forum = forums[i]
+            forumList.push({
+                name: forum.name,
+                date: forum.createdAt,
+            })
+        }
+        if(forumList.length>0){
+            return res.status(200).json({
+                isSuccessfully: true,
+                forumList: forumList,
+            })
+        } else {
+            return res.status(200).json({
+                isSuccessfully: false,
+                message: "Admin owner no forum"
+            });
+        }
+
+    })
+    .catch( err => {
+        console.log(err);
+        res.status(500).json({
+            isSuccessfully: false,
+            error: err
+        });
+    }
+    )
+}
 
 exports.getUserWaitingInCourse = (req,res,next) =>{
     id = req.userData.userId;
@@ -58,10 +94,6 @@ exports.getUserWaitingInCourse = (req,res,next) =>{
         
     })
 }
-
-const UserAssingCourse = require("../models/userAssignCourse");
-const categories = require('../config/config').categories
-
 
 exports.approveSign = (req,res,next) => {
     idSign = req.body.idSign;
