@@ -43,7 +43,7 @@ exports.getAllCourses = (req,res,next) =>{
 };
 
 exports.createCourse =  (req, res, next) => {
-    Course.findAll({ where: { name: req.body.name } })
+    Course.findAll({ where: { title: req.body.title } })
     .then(courses=>{
         if(courses.length>=1){
             return res.status(200).json({
@@ -52,10 +52,11 @@ exports.createCourse =  (req, res, next) => {
             });
         }
         adminId = req.userData.userId;
+        adminName = req.userData.username;
         const course = new Course({
-            avt: req.body.avt,
+            avt: adminName.charAt(0),
             adminId: adminId,
-            name: req.body.name,
+            name: adminName,
             image: req.body.image,
             title: req.body.title,
             description: req.body.description,
@@ -76,7 +77,7 @@ exports.createCourse =  (req, res, next) => {
                 error: err
             });
         });
-    }).catch(error=>{
+    }).catch(err=>{
         console.log(err);
         res.status(500).json({
             isSuccessfully: false,
