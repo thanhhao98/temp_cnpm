@@ -55,7 +55,7 @@ exports.getUserWaitingInCourse = (req,res,next) =>{
             .then (userAssignCourses => {
                 listUserId = []
                 for (i=0;i<userAssignCourses.length;i++){
-                    listUserId.push(userAssignCourses[i].userId)               
+                    listUserId.push(userAssignCourses[i].userId)
                 }
                 User.findAll({where: {id:listUserId}})
                 .then(users=>{
@@ -77,21 +77,18 @@ exports.getUserWaitingInCourse = (req,res,next) =>{
                         });
                     }
                     else {
-                        return res.status(401).json({
+                        return res.status(200).json({
                             isSuccessfully: false,
                             message: "no user waiting assign"
                         });
                     }
                 })
-                
-                
             })
         }
         else{
             isSuccessfully = false;
             message: "Admin no ower course"
         }
-        
     })
 }
 
@@ -121,7 +118,7 @@ exports.approveSign = (req,res,next) => {
                     });
                 })
             }
-            res.status(500).json({
+            res.status(200).json({
                 isSuccessfully: true,
                 message: 'auth fail'
             });
@@ -165,7 +162,7 @@ exports.getCourseOfAdmin = (req,res,next) =>{
                 courseList: courseList,
             })
         } else {
-            return res.status(401).json({
+            return res.status(200).json({
                 isSuccessfully: false,
                 message: "Admin owner no course"
             });
@@ -186,14 +183,14 @@ exports.getInfoAdmin = (req,res,next) =>{
     Admin.findAll({ where: { id: id } })
         .then(admin => {
         if (admin.length != 1) {
-            return res.status(401).json({
+            return res.status(200).json({
                 isSuccessfully: false,
                 message: "request failed"
             });
         }
         admin = admin[0]
         if (admin.id != req.userData.userId){
-            return res.status(401).json({
+            return res.status(200).json({
                 isSuccessfully: false,
                 message: "auth fail"
             });
@@ -224,14 +221,14 @@ exports.checkValidAdmin =  (req, res, next) => {
     Admin.findAll({ where: { email: req.body.email } })
         .then(admin => {
         if (admin.length != 1) {
-            return res.status(401).json({
+            return res.status(200).json({
                 isSuccessfully: false,
                 message: "Auth failed"
             });
         }
         bcrypt.compare(req.body.password, admin[0].password, (err, result) => {
             if (err) {
-            return res.status(401).json({
+            return res.status(200).json({
                 isSuccessfully: false,
                 message: "Auth failed"
             });
@@ -261,7 +258,7 @@ exports.checkValidAdmin =  (req, res, next) => {
                 token: token
             });
             }
-            res.status(401).json({
+            res.status(200).json({
             isSuccessfully: false,
             message: "Auth failed"
             });
@@ -280,7 +277,7 @@ exports.createAdmin =  (req, res, next) => {
     Admin.findAll({ where: { email: req.body.email } })
     .then(admin => {
     if (admin.length >= 1) {
-        return res.status(409).json({
+        return res.status(200).json({
             isSuccessfully: false,
             message: "Mail exists"
         });
@@ -302,7 +299,7 @@ exports.createAdmin =  (req, res, next) => {
             admin
             .save()
             .then(result => {
-                res.status(201).json({
+                res.status(200).json({
                     isSuccessfully: true,
                     message: "Admin created"
                 });

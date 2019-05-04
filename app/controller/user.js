@@ -11,7 +11,7 @@ exports.userSignCourse = (req,res,next)=>{
     UserAssignCourse.findAll({ where: { userId: userId, courseId:courseId } })
     .then(signs => {
         if (signs.length > 0) {
-            return res.status(401).json({
+            return res.status(200).json({
                 isSuccessfully: false,
                 message: "user already signin course"
             });
@@ -23,7 +23,7 @@ exports.userSignCourse = (req,res,next)=>{
         sign
         .save()
         .then(result => {
-            res.status(201).json({
+            res.status(200).json({
                 isSuccessfully: true,
                 message: "User assign successfully"
             });
@@ -56,7 +56,7 @@ exports.getInfoUser = (req,res,next) =>{
         }
         user = user[0]
         if (user.id != req.userData.userId){
-            return res.status(401).json({
+            return res.status(200).json({
                 isSuccessfully: false,
                 message: "auth fail"
             });
@@ -88,20 +88,20 @@ exports.checkValidUser =  (req, res, next) => {
     User.findAll({ where: { email: req.body.email } })
         .then(user => {
         if (user.length != 1) {
-            return res.status(401).json({
+            return res.status(200).json({
                 isSuccessfully: false,
                 message: "Auth failed"
             });
         }
         if (user[0].status == "inactive"){
-            return res.status(401).json({
+            return res.status(200).json({
                 isSuccessfully: false,
                 message: "User is blocked"
             });
         }
         bcrypt.compare(req.body.password, user[0].password, (err, result) => {
             if (err) {
-            return res.status(401).json({
+            return res.status(200).json({
                 isSuccessfully: false,
                 message: "Auth failed"
             });
@@ -129,7 +129,7 @@ exports.checkValidUser =  (req, res, next) => {
                 token: token
             });
             }
-            res.status(401).json({
+            res.status(200).json({
             isSuccessfully: false,
             message: "Auth failed"
             });
@@ -165,7 +165,7 @@ exports.createUser =  (req, res, next) => {
     User.findAll({ where: { email: req.body.email } })
     .then(user => {
     if (user.length >= 1) {
-        return res.status(409).json({
+        return res.status(200).json({
             isSuccessfully: false,
             message: "Mail exists"
         });
@@ -187,7 +187,7 @@ exports.createUser =  (req, res, next) => {
             user
             .save()
             .then(result => {
-                res.status(201).json({
+                res.status(200).json({
                     isSuccessfully: true,
                     message: "User created"
                 });
