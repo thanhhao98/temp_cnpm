@@ -2,7 +2,8 @@ var exports = module.exports = {};
 const Course = require('../models/course');
 const numShowPerPage = require('../config/config').numShowPerPage;
 const categories = require('../config/config').categories
-exports.getAllCourses = (req,res,next) =>{
+
+exports.getAllCoursesWithPaginate = (req,res,next) =>{
     idPage = parseInt(req.params.idPage);
     Course.findAll({})
     .then(courses=>{
@@ -21,6 +22,41 @@ exports.getAllCourses = (req,res,next) =>{
             })
         }
         courseList = courseList.slice(from,to);
+        if(courseList.length>0){
+            return res.status(200).json({
+                sSuccessfully: true,
+                categories: categories,
+                courseList: courseList,
+            })
+        } else {
+            return res.status(200).json({
+                isSuccessfully: false,
+                message: "request failed"
+            });
+        }
+    }).catch(error=>{
+        console.log(err);
+        res.status(500).json({
+            isSuccessfully: false,
+            error: err
+        });
+    });
+};
+exports.getAllCourses = (req,res,next) =>{
+    Course.findAll({})
+    .then(courses=>{
+        var courseList = []
+        for(i=0;i<courses.length;i++){
+            course = courses[i]
+            courseList.push({
+                category: course.category,
+                avatar: course.avt,
+                name: course.name,
+                date: course.createdAt,
+                image: course.image,
+                title: course.title,
+            })
+        }
         if(courseList.length>0){
             return res.status(200).json({
                 sSuccessfully: true,
