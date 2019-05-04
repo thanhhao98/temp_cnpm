@@ -48,7 +48,7 @@ exports.createCourse =  (req, res, next) => {
         if(courses.length>=1){
             return res.status(200).json({
                 isSuccessfully: false,
-                message: "Course name exists"
+                message: "Course title exists"
             });
         }
         adminId = req.userData.userId;
