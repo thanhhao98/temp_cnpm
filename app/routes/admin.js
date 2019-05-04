@@ -1,10 +1,12 @@
 const router = require('express').Router();
 const bcrypt = require("bcrypt");
-var userController = require("../controller/user")
-var adminController = require("../controller/admin")
-var courseController = require("../controller/course")
+const userController = require("../controller/user")
+const adminController = require("../controller/admin")
+const courseController = require("../controller/course")
+const videoController = require("../controller/video");
 const checkAuthAdmin = require('../middleware/admin-auth');
-
+router.post("/getAllVideoWithCourseId",checkAuthAdmin,videoController.getAllVideoWithCourseId);
+router.post("/createVideo",checkAuthAdmin,videoController.createVideo);
 router.get("/listCourse",checkAuthAdmin,adminController.getCourseOfAdmin);
 router.post("/approveSign",checkAuthAdmin,adminController.approveSign);
 router.post("/login", adminController.checkValidAdmin);
