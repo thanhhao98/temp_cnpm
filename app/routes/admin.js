@@ -4,7 +4,7 @@ var userController = require("../controller/user")
 var adminController = require("../controller/admin")
 var courseController = require("../controller/course")
 const checkAuthAdmin = require('../middleware/admin-auth');
-
+router.get("/listUserWaitingInCourse/:courseId",checkAuthAdmin,adminController.getUserWaitingInCourse);
 router.get("/listCourse",checkAuthAdmin,adminController.getCourseOfAdmin);
 router.post("/login", adminController.checkValidAdmin);
 router.post("/signup", adminController.createAdmin);
