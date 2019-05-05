@@ -78,18 +78,10 @@ exports.getUserWaitingInCourse = (req,res,next) =>{
                             courseId: courseId
                         })
                     }
-                    if (listUserAssign.length >0){
-                        return res.status(200).json({
-                            isSuccessfully: true,
-                            listUserAssign: listUserAssign
-                        });
-                    }
-                    else {
-                        return res.status(200).json({
-                            isSuccessfully: false,
-                            message: "no user waiting assign"
-                        });
-                    }
+                    return res.status(200).json({
+                        isSuccessfully: true,
+                        listUserAssign: listUserAssign
+                    });
                 })
             })
         }
