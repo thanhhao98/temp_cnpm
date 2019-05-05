@@ -95,13 +95,26 @@ exports.getUserWaitingInCourse = (req,res,next) =>{
 }
 
 exports.approveSign = (req,res,next) => {
-    idSign = req.body.idSign;
+    idUser = req.body.userId;
+    courseId = req.body.courseId;
     idAdmin = req.userData.userId;
-    UserAssignCourse.findAll({where: {id: idSign}})
+    UserAssignCourse.findAll({where: {userId: idUser,courseId:courseId,status:'waiting' }})
     .then(signs => {
+        if (signs.length != 1){
+            return res.status(200).json({
+                isSuccessfully: false,
+                message: 'Sign is not exist'
+            })
+        }
         sign = signs[0];
         Course.findAll({where: {id: sign.courseId,adminId:idAdmin}})
         .then(courses =>{
+            if (courses.length != 1){
+                return res.status(200).json({
+                    isSuccessfully: false,
+                    message: 'Auth fail'
+                })
+            }
             course = courses[0]
             sign.status = 'approve';
             sign.save()
