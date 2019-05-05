@@ -13,6 +13,7 @@ exports.getAllCoursesWithPaginate = (req,res,next) =>{
         for(i=0;i<courses.length;i++){
             course = courses[i]
             courseList.push({
+                id: course.id,
                 category: course.category,
                 avatar: course.avt,
                 name: course.name,
@@ -49,6 +50,7 @@ exports.getAllCourses = (req,res,next) =>{
         for(i=0;i<courses.length;i++){
             course = courses[i]
             courseList.push({
+                id: course.id,
                 category: course.category,
                 avatar: course.avt,
                 name: course.name,
