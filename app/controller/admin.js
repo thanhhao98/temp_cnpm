@@ -51,6 +51,12 @@ exports.getUserWaitingInCourse = (req,res,next) =>{
     courseId = req.params.courseId;
     Course.findAll({where: {id: courseId}})
     .then (courses =>{ 
+        if (courses.length != 1) {
+            return res.status(200).json({
+                isSuccessfully: false,
+                message: "Course is not exist"
+            });
+        }
         course = courses[0]
         if (course.adminId == id){
             UserAssignCourse.findAll({where: {courseId: course.id,status:"waiting"}})
