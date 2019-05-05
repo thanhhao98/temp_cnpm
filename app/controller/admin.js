@@ -151,6 +151,7 @@ exports.getCourseOfAdmin = (req,res,next) =>{
         for(i=0;i<courses.length;i++){
             course = courses[i]
             courseList.push({
+                id: course.id,
                 category: course.category,
                 avatar: course.avt,
                 name: course.name,
@@ -159,17 +160,10 @@ exports.getCourseOfAdmin = (req,res,next) =>{
                 title: course.title,
             })
         }
-        if(courseList.length>0){
-            return res.status(200).json({
-                isSuccessfully: true,
-                courseList: courseList,
-            })
-        } else {
-            return res.status(200).json({
-                isSuccessfully: false,
-                message: "Admin owner no course"
-            });
-        }
+        return res.status(200).json({
+            isSuccessfully: true,
+            courseList: courseList,
+        })
 
     })
     .catch( err => {
