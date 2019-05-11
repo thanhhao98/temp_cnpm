@@ -1,7 +1,10 @@
-var exports = module.exports = {};
-const Course = require('../models/course');
-const numShowPerPage = require('../config/config').numShowPerPage;
+var exports = module.exports = {}
+const Course = require('../models/course')
+const numShowPerPage = require('../config/config').numShowPerPage
 const categories = require('../config/config').categories
+const secrectKey = require('../config/config').secrectKey
+const succseeMsg = require('../config/config').successMsg
+const failMsg = require('../config/config').failMsg
 
 exports.extractInfo = async (course) =>{
     return {
@@ -42,82 +45,36 @@ exports.getCourseWithAdminId = async (adminId) => {
     }
     return courseList
 }
-exports.getAllCoursesWithPaginate = (req,res,next) =>{
-    idPage = parseInt(req.params.idPage);
-    Course.findAll({})
-    .then(courses=>{
-        from = idPage*numShowPerPage;
-        to = Math.min((idPage+1)*(numShowPerPage),courses.length);
-        var courseList = []
-        for(i=0;i<courses.length;i++){
-            course = courses[i]
-            courseList.push({
-                id: course.id,
-                category: course.category,
-                avatar: course.avt,
-                name: course.name,
-                date: course.createdAt,
-                image: course.image,
-                title: course.title,
-            })
-        }
-        courseList = courseList.slice(from,to);
-        if(courseList.length>0){
-            return res.status(200).json({
-                sSuccessfully: true,
-                categories: categories,
-                courseList: courseList,
-            })
-        } else {
-            return res.status(200).json({
-                isSuccessfully: false,
-                message: "request failed"
-            });
-        }
-    }).catch(error=>{
-        console.log(err);
-        res.status(500).json({
-            isSuccessfully: false,
-            error: err
-        });
-    });
-};
-exports.getAllCourses = (req,res,next) =>{
-    Course.findAll({})
-    .then(courses=>{
-        var courseList = []
-        for(i=0;i<courses.length;i++){
-            course = courses[i]
-            courseList.push({
-                id: course.id,
-                category: course.category,
-                avatar: course.avt,
-                name: course.name,
-                date: course.createdAt,
-                image: course.image,
-                title: course.title,
-            })
-        }
-        if(courseList.length>0){
-            return res.status(200).json({
-                sSuccessfully: true,
-                categories: categories,
-                courseList: courseList,
-            })
-        } else {
-            return res.status(200).json({
-                isSuccessfully: false,
-                message: "request failed"
-            });
-        }
-    }).catch(error=>{
-        console.log(err);
-        res.status(500).json({
-            isSuccessfully: false,
-            error: err
-        });
-    });
-};
+exports.getAllCoursesWithPaginate = async (req,res,next) =>{
+    idPage = parseInt(req.params.idPage)
+    courses = await Course.findAll({})
+    from = idPage*numShowPerPage
+    numPage = Math.round(courses.length/numShowPerPage) + 1
+    to = Math.min((idPage+1)*(numShowPerPage),courses.length)
+    courseList = []
+    for await (course of courses){
+        courseList.push(await exports.extractInfo(course))
+    }
+    courseList = courseList.slice(from,to)
+    data = {
+        numPage: numPage,
+        ategories: categories,
+        courseList: courseList,
+    }
+    return res.status(200).json(succseeMsg(data))
+}
+exports.getAllCourses = async (req,res,next) =>{
+    courses = await Course.findAll({})
+    courseList = []
+    for await (course of courses){
+        courseList.push(await exports.extractInfo(course))
+    }
+    data = {
+        ategories: categories,
+        courseList: courseList,
+    }
+    return res.status(200).json(succseeMsg(data))
+}
 
 exports.createCourse =  (req, res, next) => {
     Course.findAll({ where: { title: req.body.title } })
@@ -126,10 +83,10 @@ exports.createCourse =  (req, res, next) => {
             return res.status(200).json({
                 isSuccessfully: false,
                 message: "Course title exists"
-            });
+            })
         }
-        adminId = req.userData.userId;
-        adminName = req.userData.username;
+        adminId = req.userData.userId
+        adminName = req.userData.username
         const course = new Course({
             avt: adminName.charAt(0),
             adminId: adminId,
@@ -138,27 +95,27 @@ exports.createCourse =  (req, res, next) => {
             title: req.body.title,
             description: req.body.description,
             category: req.body.category
-        });
+        })
         course
         .save()
         .then(result => {
                 res.status(200).json({
                     isSuccessfully: true,
                     message: "Course created"
-            });
+            })
         })
         .catch(err => {
-            console.log(err);
+            console.log(err)
             res.status(500).json({
                 isSuccessfully: false,
                 error: err
-            });
-        });
+            })
+        })
     }).catch(err=>{
-        console.log(err);
+        console.log(err)
         res.status(500).json({
             isSuccessfully: false,
             error: err
-        });
-    });
-};
+        })
+    })
+}
