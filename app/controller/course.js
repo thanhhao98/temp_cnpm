@@ -3,6 +3,45 @@ const Course = require('../models/course');
 const numShowPerPage = require('../config/config').numShowPerPage;
 const categories = require('../config/config').categories
 
+exports.extractInfo = async (course) =>{
+    return {
+        id: course.id,
+        category: course.category,
+        avatar: course.avt,
+        name: course.name,
+        date: course.createdAt,
+        image: course.image,
+        title: course.title,
+    }
+}
+
+exports.getAdminId = async (courseId) =>{
+    courses = await Course.findAll({where:{id:courseId}})
+    if(courses.length!=1){
+        return false
+    } else {
+        course = courses[0]
+        return course.adminId
+    }
+}
+
+exports.getCourseWithId = async (courseId) => {
+    courses = await Course.findAll({where: {id: courseId}})
+    courseList = []
+    for await (course of courses){
+        courseList.push(await exports.extractInfo(course))
+    }
+    return courseList
+}
+
+exports.getCourseWithAdminId = async (adminId) => {
+    courses = await Course.findAll({where: {adminId: adminId}})
+    courseList = []
+    for await (course of courses){
+        courseList.push(await exports.extractInfo(course))
+    }
+    return courseList
+}
 exports.getAllCoursesWithPaginate = (req,res,next) =>{
     idPage = parseInt(req.params.idPage);
     Course.findAll({})

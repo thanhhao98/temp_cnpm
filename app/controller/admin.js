@@ -1,15 +1,29 @@
 var exports = module.exports = {}
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const Admin = require("../models/admin");
-const User = require ("../models/user");
-const Course = require("../models/course");
-const Forum = require ("../models/forum");
-const UserAssignCourse = require("../models/userAssignCourse");
-const secrectKey = require('../config/config').secrectKey;
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+const Admin = require('../models/admin')
+const Course = require('../models/course')
+const Forum = require ('../models/forum')
+const secrectKey = require('../config/config').secrectKey
+const succseeMsg = require('../config/config').successMsg
+const failMsg = require('../config/config').failMsg
+const signController = require('./sign')
+const courseController = require('./course')
 
+// need to fix
+exports.extractInfo = async (admin)=>{
+    return {
+        id : admin.id,
+        avt: admin.avt,
+        username : admin.username,
+        email : admin.email,
+        name : admin.name,
+    }
+}
+
+// not ok
 exports.getForumOfAdmin = (req,res,next) =>{
-    id = req.userData.userId;
+    id = req.userData.id
     Forum.findAll({where: {adminId: id}})
     .then(forums => {
         forumList = []
@@ -23,299 +37,112 @@ exports.getForumOfAdmin = (req,res,next) =>{
                 date: forum.createdAt,
             })
         }
-        if(forumList.length>0){
-            return res.status(200).json({
-                isSuccessfully: true,
-                forumList: forumList,
-            })
-        } else {
-            return res.status(200).json({
-                isSuccessfully: false,
-                message: "Admin owner no forum"
-            });
-        }
+        return res.status(200).json(succseeMsg(forumList))
 
     })
-    .catch( err => {
-        console.log(err);
-        res.status(500).json({
-            isSuccessfully: false,
-            error: err
-        });
+    .catch( error => {
+        console.log(error)
+        res.status(500).json(failMsg(error))
+    })
+}
+exports.getUserWaiting = async (req,res,next) => {
+    adminId = req.userData.id
+    listUserAssign = []
+    courses = await Course.findAll({where: {adminId: adminId}})
+    for await (course of courses){
+        courseId = course.id
+        listUserAssign = listUserAssign.concat(await signController.getUserWaitingInCourse(courseId))
     }
-    )
-}
-
-exports.getUserWaitingInCourse = (req,res,next) =>{
-    id = req.userData.userId;
-    courseId = req.params.courseId;
-    Course.findAll({where: {id: courseId}})
-    .then (courses =>{ 
-        if (courses.length != 1) {
-            return res.status(200).json({
-                isSuccessfully: false,
-                message: "Course is not exist"
-            });
-        }
-        course = courses[0]
-        if (course.adminId == id){
-            UserAssignCourse.findAll({where: {courseId: course.id,status:"waiting"}})
-            .then (userAssignCourses => {
-                listUserId = []
-                for (i=0;i<userAssignCourses.length;i++){
-                    listUserId.push(userAssignCourses[i].userId)
-                }
-                User.findAll({where: {id:listUserId}})
-                .then(users=>{
-                    listUserAssign = []
-                    for (i=0;i<users.length;i++){
-                        listUserAssign.push({
-                            id: users[i].id,
-                            name: users[i].name,
-                            username: users[i].username,
-                            avt: users[i].avt,
-                            email: users[i].email,
-                            courseId: courseId
-                        })
-                    }
-                    return res.status(200).json({
-                        isSuccessfully: true,
-                        listUserAssign: listUserAssign
-                    });
-                })
-            })
-        }
-        else{
-            return res.status(200).json({
-                isSuccessfully: false,
-                message: "Admin no ower course"
-            });
-        }
-    })
-}
-
-exports.approveSign = (req,res,next) => {
-    idUser = req.body.userId;
-    courseId = req.body.courseId;
-    idAdmin = req.userData.userId;
-    UserAssignCourse.findAll({where: {userId: idUser,courseId:courseId,status:'waiting' }})
-    .then(signs => {
-        if (signs.length != 1){
-            return res.status(200).json({
-                isSuccessfully: false,
-                message: 'Sign is not exist'
-            })
-        }
-        sign = signs[0];
-        Course.findAll({where: {id: sign.courseId,adminId:idAdmin}})
-        .then(courses =>{
-            if (courses.length != 1){
-                return res.status(200).json({
-                    isSuccessfully: false,
-                    message: 'Auth fail'
-                })
-            }
-            course = courses[0]
-            sign.status = 'approve';
-            sign.save()
-            .then(()=>{
-                return res.status(200).json({
-                    isSuccessfully: true,
-                    message: 'approve sign successfully'
-                })
-            })
-            .catch(err=>{
-                console.log(err);
-                res.status(500).json({
-                    isSuccessfully: false,
-                    error: err
-                });
-            })
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json({
-                isSuccessfully: false,
-                error: err
-            });
-        })
-    })
-    .catch(err => {
-        console.log(err);
-        res.status(500).json({
-            isSuccessfully: false,
-            error: err
-        });
-    })
-}
-exports.getCourseOfAdmin = (req,res,next) =>{
-    id = req.userData.userId;
-    Course.findAll({where: {adminId: id}})
-    .then(courses => {
-        courseList = []
-        for(i=0;i<courses.length;i++){
-            course = courses[i]
-            courseList.push({
-                id: course.id,
-                category: course.category,
-                avatar: course.avt,
-                name: course.name,
-                date: course.createdAt,
-                image: course.image,
-                title: course.title,
-            })
-        }
-        return res.status(200).json({
-            isSuccessfully: true,
-            courseList: courseList,
-        })
-
-    })
-    .catch( err => {
-        console.log(err);
-        res.status(500).json({
-            isSuccessfully: false,
-            error: err
-        });
+    data = {
+        listUserAssign: listUserAssign
     }
-    )
+    return res.status(200).json(succseeMsg(data))
 }
-exports.getInfoAdmin = (req,res,next) =>{
-    id = parseInt(req.params.userId);
-    Admin.findAll({ where: { id: id } })
-        .then(admin => {
-        if (admin.length != 1) {
-            return res.status(200).json({
-                isSuccessfully: false,
-                message: "request failed"
-            });
-        }
-        admin = admin[0]
-        if (admin.id != req.userData.userId){
-            return res.status(200).json({
-                isSuccessfully: false,
-                message: "auth fail"
-            });
-        }
-        data = {
-            id : admin.id,
-            avt: admin.avt,
-            username : admin.username,
-            email : admin.email,
-            name : admin.name,
-            lastlogin : admin.last_login,
-        }
-        return res.status(200).json({
-            isSuccessfully: true,
-            data: data,
-            message: "successfully"
-        });
-        })
-        .catch(err => {
-        console.log(err);
-        res.status(500).json({
-            isSuccessfully: true,
-            error: err
-        });
-        });
-}
-exports.checkValidAdmin =  (req, res, next) => {
-    Admin.findAll({ where: { email: req.body.email } })
-        .then(admin => {
-        if (admin.length != 1) {
-            return res.status(200).json({
-                isSuccessfully: false,
-                message: "Auth failed"
-            });
-        }
-        bcrypt.compare(req.body.password, admin[0].password, (err, result) => {
-            if (err) {
-            return res.status(200).json({
-                isSuccessfully: false,
-                message: "Auth failed"
-            });
-            }
-            if (result) {
-            const token = jwt.sign(
-                {
-                    email: admin[0].email,
-                    isAdmin: true,
-                    avt: admin[0].avt,
-                    userId: admin[0].id,
-                    username: admin[0].username
-                },
-                secrectKey,
-                {
-                    expiresIn: "1h"
-                }
-            );
-            return res.status(200).json({
-                isSuccessfully: true,
-                email: admin[0].email,
-                isAdmin: true,
-                avt: admin[0].avt,
-                userId: admin[0].id,
-                username: admin[0].username,
-                message: "Auth successful",
-                token: token
-            });
-            }
-            res.status(200).json({
-            isSuccessfully: false,
-            message: "Auth failed"
-            });
-        });
-        })
-        .catch(err => {
-        console.log(err);
-        res.status(500).json({
-            isSuccessfully: false,
-            error: err
-        });
-        });
-};
 
-exports.createAdmin =  (req, res, next) => {
-    Admin.findAll({ where: { email: req.body.email } })
-    .then(admin => {
-        
-        if (admin.length >= 1) {
-            return res.status(200).json({
-                isSuccessfully: false,
-                message: "Mail exists"
-            });
-        } else {
-            bcrypt.hash(req.body.password, 10, (err, hash) => {
-            if (err) {
-                return res.status(500).json({
-                    isSuccessfully: false,
-                    error: err
-                });
+exports.getUserWaitingInCourse = async (req,res,next) =>{
+    adminId = req.userData.id
+    courseId = req.params.courseId
+    listUserAssign = []
+    courses = await Course.findAll({where: {id:courseId,adminId: adminId}})
+    courseId = courses[0].id
+    listUserAssign = await signController.getUserWaitingInCourse(courseId)
+    data = {
+        listUserAssign: listUserAssign
+    }
+    return res.status(200).json(succseeMsg(data))
+}
+
+exports.approveSign = async (req,res,next) => {
+    signId = req.body.signId
+    idAdmin = req.userData.id
+    if(idAdmin = await signController.getAdminId(signId)){
+        if(await signController.getStatus(signId)=='waiting'){
+            if(await signController.changeStatusSign(signId,'approve')){
+                return res.status(200).json(succseeMsg())
             } else {
-                const admin = new Admin({
-                    avt: req.body.avt,
-                    email: req.body.email,
-                    name: req.body.name,
-                    username: req.body.username,
-                    password: hash
-                });
-                admin
-                .save()
-                .then(result => {
-                    res.status(200).json({
-                        isSuccessfully: true,
-                        message: "Admin created"
-                    });
-                })
-                .catch(err => {
-                    console.log(err);
-                    res.status(500).json({
-                        isSuccessfully: false,
-                        error: err
-                    });
-                });
+                return res.status(200).json(failMsg('approve fail'))
             }
-            });
+        } else {
+            return res.status(200).json(failMsg('Sign already approve'))
         }
-    });
-};
+    } else {
+        return res.status(200).json(failMsg('Course is not owner by admin'))
+    }
+}
+
+exports.getCourseOfAdmin = async (req,res,next) =>{
+    adminId = req.userData.id
+    courseList = await courseController.getCourseWithAdminId(adminId)
+    data = {
+        courseList: courseList
+    }
+    return res.status(200).json(succseeMsg(data))
+}
+exports.getInfoAdmin = async (req,res,next) =>{
+    adminId = req.userData.id
+    admins = await Admin.findAll({ where: { id: adminId } })
+    if(admins.length!=1){
+        return res.status(200).json(failMsg('admin is not exist'))
+    }
+    admin = admins[0]
+    data = {
+        adminInfo: await exports.extractInfo(admin)
+    }
+    return res.status(200).json(succseeMsg(data))
+}
+exports.checkValidAdmin = async (req, res, next) => {
+    admins = await Admin.findAll({ where: { email: req.body.email } })
+    if(admins.length!=1){
+        return res.status(200).json(failMsg('email is not exist'))
+    }
+    admin = admins[0]
+    passwordVaild = await bcrypt.compare(req.body.password,admin.password)
+    if (!passwordVaild) {
+        return res.status(200).json(failMsg('Password is not valid'))
+    }
+    userInfo = await exports.extractInfo(admin)
+    userInfo.isAdmin = true
+    const token = jwt.sign(userInfo,secrectKey,{expiresIn: '1h'})
+    userInfo.token = token
+    data = {
+        userInfo: userInfo
+    }
+    return res.status(200).json(succseeMsg(data))
+}
+
+exports.createAdmin = async  (req, res, next) => {
+    admins = await Admin.findAll({ where: { email: req.body.email } })
+    if (admins.length >= 1) {
+        return res.status(200).json(failMsg('Mail exists'))
+    }
+    hash = await bcrypt.hash(req.body.password,10)
+    const admin = new Admin({
+        avt: req.body.avt,
+        email: req.body.email,
+        name: req.body.name,
+        username: req.body.username,
+        password: hash
+    })
+    result = await admin.save()
+    res.status(200).json(succseeMsg())
+}

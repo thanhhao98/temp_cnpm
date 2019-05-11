@@ -1,5 +1,5 @@
-const db = require('./index');
-const Sequelize = require('sequelize');
+const db = require('./index')
+const Sequelize = require('sequelize')
 const Admin = require("./admin")
 
 const Course = db.define('course',{
@@ -12,5 +12,5 @@ const Course = db.define('course',{
     description: { type: Sequelize.STRING ,notEmpty: true},
 	category: {type: Sequelize.ENUM('Development', 'Design', 'Bussiness', 'IT & Software', 'Personal Development', 'Marketing', 'Photography', 'Music'),defaultValue:'Development',allowNull: false },
 })
-Course.belongsTo(Admin);
-module.exports = Course;
+Course.belongsTo(Admin)
+module.exports = Course

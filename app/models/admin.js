@@ -1,5 +1,5 @@
-const db = require('./index');
-const Sequelize = require('sequelize');
+const db = require('./index')
+const Sequelize = require('sequelize')
 
 
 const Admin = db.define('admin',{
@@ -11,4 +11,4 @@ const Admin = db.define('admin',{
 	password : {type: Sequelize.STRING,allowNull: false },
 })
 
-module.exports = Admin;
+module.exports = Admin

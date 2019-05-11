@@ -1,5 +1,5 @@
-const db = require('./index');
-const Sequelize = require('sequelize');
+const db = require('./index')
+const Sequelize = require('sequelize')
 
 
 const User = db.define('user',{
@@ -13,4 +13,4 @@ const User = db.define('user',{
 	status: {type: Sequelize.ENUM('active','inactive'),defaultValue:'active',allowNull: false },
 })
 
-module.exports = User;
+module.exports = User

@@ -1,5 +1,5 @@
 var exports = module.exports = {};
-const Forum = require("../models/forum");
+const Forum = require('../models/forum');
 
 exports.createForum =  (req, res, next) => {
     Forum.findAll({ where: { name: req.body.name } })
@@ -7,7 +7,7 @@ exports.createForum =  (req, res, next) => {
         if(forums.length>=1){
             return res.status(200).json({
                 isSuccessfully: false,
-                message: "Forum name exists"
+                message: 'Forum name exists'
             });
         }
         adminId = req.userData.userId;
@@ -21,7 +21,7 @@ exports.createForum =  (req, res, next) => {
         .then(result => {
                 res.status(200).json({
                     isSuccessfully: true,
-                    message: "Forum created"
+                    message: 'Forum created'
             });
         })
         .catch(err => {
@@ -65,7 +65,7 @@ exports.getAllForums = (req,res,next) =>{
         } else {
             return res.status(200).json({
                 isSuccessfully: false,
-                message: "request failed"
+                message: 'request failed'
             });
         }
     }).catch(error=>{

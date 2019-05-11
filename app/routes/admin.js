@@ -1,34 +1,51 @@
-const router = require('express').Router();
-const bcrypt = require("bcrypt");
-const userController = require("../controller/user");
-const adminController = require("../controller/admin");
-const courseController = require("../controller/course");
-const forumController = require("../controller/forum");
-const videoController = require("../controller/video");
-const checkAuthAdmin = require('../middleware/admin-auth');
-router.post("/getAllVideoWithCourseId",checkAuthAdmin,videoController.getAllVideoWithCourseId);
-router.post("/createVideo",checkAuthAdmin,videoController.createVideo);
-router.get("/listUserWaitingInCourse/:courseId",checkAuthAdmin,adminController.getUserWaitingInCourse);
-router.get("/listCourse",checkAuthAdmin,adminController.getCourseOfAdmin);
-router.get("/listForum",checkAuthAdmin,adminController.getForumOfAdmin);
-router.post("/approveSign",checkAuthAdmin,adminController.approveSign);
-router.post("/login", adminController.checkValidAdmin);
-router.post("/signup", adminController.createAdmin);
-router.post("/createCourse",checkAuthAdmin,courseController.createCourse);
-router.post("/createForum",checkAuthAdmin,forumController.createForum);
-router.delete("/deleteUserById", checkAuthAdmin, userController.deleteUserById);
+const router = require('express').Router()
+const bcrypt = require('bcrypt')
+const userController = require('../controller/user')
+const adminController = require('../controller/admin')
+const courseController = require('../controller/course')
+const forumController = require('../controller/forum')
+const videoController = require('../controller/video')
+const checkAuthAdmin = require('../middleware/admin-auth')
+const succseeMsg = require('../config/config').successMsg
+const failMsg = require('../config/config').failMsg
 
+// Sign
+router.put('/approveSign',checkAuthAdmin,adminController.approveSign)
+router.get('/listUserWaitingInCourse/:courseId',checkAuthAdmin,adminController.getUserWaitingInCourse)
+router.get('/listUserWaiting/',checkAuthAdmin,adminController.getUserWaiting)
+
+
+// Course
+router.post('/createCourse',checkAuthAdmin,courseController.createCourse)
+router.get('/listCourse',checkAuthAdmin,adminController.getCourseOfAdmin)
+router.get('/getAllVideoWithCourseId/:courseId',checkAuthAdmin,videoController.getAllVideoWithCourseId)
+
+
+
+// Forum
+router.post('/createForum',checkAuthAdmin,forumController.createForum)
+router.get('/listForum',checkAuthAdmin,adminController.getForumOfAdmin)
+
+
+// Video
+router.post('/createVideo',checkAuthAdmin,videoController.createVideo)
+
+
+// Auth
+router.post('/login', adminController.checkValidAdmin)
+router.post('/signup', adminController.createAdmin)
+router.get('/info',checkAuthAdmin,adminController.getInfoAdmin)
 router.get('/logout',checkAuthAdmin,(req,res,next)=>{
-  delete req.headers.authorization;
-  res.status(200).send({
-      isSuccessfully: false,
-      message: "logout successful",
-  });
-});
+  delete req.headers.authorization
+  res.status(200).send(succseeMsg())
+})
 
+
+// Test
 router.post('/private',checkAuthAdmin,(req,res,next)=>{
-  res.status(200).send('ok');
-});
+  res.status(200).send(succseeMsg())
+})
 
 
-module.exports = router;
+
+module.exports = router

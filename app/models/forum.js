@@ -1,5 +1,5 @@
-const db = require('./index');
-const Sequelize = require('sequelize');
+const db = require('./index')
+const Sequelize = require('sequelize')
 const Admin = require("./admin")
 
 const Forum = db.define('forum',{
@@ -8,5 +8,5 @@ const Forum = db.define('forum',{
     name: { type: Sequelize.STRING,notEmpty: true},
     description: { type: Sequelize.STRING ,notEmpty: true},
 })
-Forum.belongsTo(Admin);
-module.exports = Forum;
+Forum.belongsTo(Admin)
+module.exports = Forum

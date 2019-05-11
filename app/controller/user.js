@@ -1,206 +1,101 @@
 var exports = module.exports = {}
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const User = require("../models/user");
-const UserAssignCourse = require("../models/userAssignCourse");
-const secrectKey = require('../config/config').secrectKey;
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+const User = require('../models/user')
+const secrectKey = require('../config/config').secrectKey
+const succseeMsg = require('../config/config').successMsg
+const failMsg = require('../config/config').failMsg
+const signController = require('./sign')
+const courseController = require('./course')
 
-exports.userSignCourse = (req,res,next)=>{
-    userId = req.userData.userId;
-    courseId = req.body.courseId;
-    UserAssignCourse.findAll({ where: { userId: userId, courseId:courseId } })
-    .then(signs => {
-        if (signs.length > 0) {
-            return res.status(200).json({
-                isSuccessfully: false,
-                message: "user already signin course"
-            });
-        }
-        const sign = new UserAssignCourse({
-            userId: userId,
-            courseId:courseId
-        });
-        sign
-        .save()
-        .then(result => {
-            res.status(200).json({
-                isSuccessfully: true,
-                message: "User assign successfully"
-            });
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json({
-                isSuccessfully: false,
-                error: err
-            });
-        });
-    })
-    .catch(err => {
-        console.log(err);
-        res.status(500).json({
-            isSuccessfully: false,
-            error: err
-        });
-    });
-}
-exports.getInfoUser = (req,res,next) =>{
-    id = parseInt(req.params.userId);
-    User.findAll({ where: { id: id } })
-    .then(user => {
-        if (user.length != 1) {
-            return res.status(401).json({
-                isSuccessfully: false,
-                message: "request failed"
-            });
-        }
-        user = user[0]
-        if (user.id != req.userData.userId){
-            return res.status(200).json({
-                isSuccessfully: false,
-                message: "auth fail"
-            });
-        }
-        data = {
-            id : user.id,
-            avt: user.avt,
-            username : user.username,
-            email : user.email,
-            name : user.name,
-            lastlogin : user.last_login,
-            status : user.status,
-        }
-        return res.status(200).json({
-            isSuccessfully: true,
-            data: data,
-            message: "successfully"
-        });
-    })
-    .catch(err => {
-        console.log(err);
-        res.status(500).json({
-            isSuccessfully: false,
-            error: err
-        });
-    });
-}
-exports.checkValidUser =  (req, res, next) => {
-    User.findAll({ where: { email: req.body.email } })
-        .then(user => {
-        if (user.length != 1) {
-            return res.status(200).json({
-                isSuccessfully: false,
-                message: "Auth failed"
-            });
-        }
-        if (user[0].status == "inactive"){
-            return res.status(200).json({
-                isSuccessfully: false,
-                message: "User is blocked"
-            });
-        }
-        bcrypt.compare(req.body.password, user[0].password, (err, result) => {
-            if (err) {
-            return res.status(200).json({
-                isSuccessfully: false,
-                message: "Auth failed"
-            });
-            }
-            if (result) {
-            const token = jwt.sign(
-                {
-                    email: user[0].email,
-                    avt: user[0].avt,
-                    userId: user[0].id,
-                    username: user[0].username
-                },
-                secrectKey,
-                {
-                    expiresIn: "3h"
-                }
-            );
-            return res.status(200).json({
-                isSuccessfully: true,
-                email: user[0].email,
-                avt: user[0].avt,
-                userId: user[0].id,
-                username: user[0].username,
-                message: "Auth successful",
-                token: token
-            });
-            }
-            res.status(200).json({
-            isSuccessfully: false,
-            message: "Auth failed"
-            });
-        });
-        })
-        .catch(err => {
-        console.log(err);
-        res.status(500).json({
-            isSuccessfully: false,
-            error: err
-        });
-        });
-};
-
-exports.deleteUserById  = (req, res, next) => {
-    User.destroy({ where: {id: req.body.userId }})
-      .then(result => {
-        res.status(200).json({
-            isSuccessfully: true,
-            message: "User deleted"
-        });
-      })
-      .catch(err => {
-        console.log(err);
-        res.status(500).json({
-            isSuccessfully: false,
-            error: err
-        });
-      });
-};
-
-exports.createUser =  (req, res, next) => {
-    User.findAll({ where: { email: req.body.email } })
-    .then(user => {
-    if (user.length >= 1) {
-        return res.status(200).json({
-            isSuccessfully: false,
-            message: "Mail exists"
-        });
-    } else {
-        bcrypt.hash(req.body.password, 10, (err, hash) => {
-        if (err) {
-            return res.status(500).json({
-                isSuccessfully: false,
-                error: err
-            });
-        } else {
-            const user = new User({
-                avt: req.body.avt,
-                email: req.body.email,
-                name: req.body.name,
-                username: req.body.username,
-                password: hash
-            });
-            user
-            .save()
-            .then(result => {
-                res.status(200).json({
-                    isSuccessfully: true,
-                    message: "User created"
-                });
-            })
-            .catch(err => {
-                console.log(err);
-                res.status(500).json({
-                    isSuccessfully: false,
-                    error: err
-                });
-            });
-        }
-        });
+exports.extractInfo =  (user) => {
+    return {
+        id : user.id,
+        avt: user.avt,
+        username : user.username,
+        email : user.email,
+        name : user.name,
+        lastLogin : user.last_login,
+        status : user.status,
     }
-    });
-};
+}
+exports.signCourse = async (req,res,next)=>{
+    userId = req.userData.id
+    courseId = req.body.courseId
+    if(await signController.checkSignExist(userId,courseId)){
+        return res.status(200).json(failMsg('User already sign this course'))
+    }
+    await signController.createSign(userId,courseId)
+    return res.status(200).json(succseeMsg())
+}
+exports.getInfoUser = async (req,res,next) => {
+    userId = req.userData.id
+    users = await User.findAll({ where: { id: userId } })
+    if(users.length!=1){
+        return res.status(200).json(failMsg('user is not exist'))
+    }
+    user = users[0]
+    data = {
+        userInfo: await exports.extractInfo(user)
+    }
+    return res.status(200).json(succseeMsg(data))
+}
+
+exports.getListCourseWithStatus = async (userId,status) => {
+    listCourse = await signController.getListCourseWithUserId(userId,status)
+    return await courseController.getCourseWithId(listCourse)
+}
+
+exports.getListCourseWaiting = async (req,res,next) => {
+    userId = req.userData.id
+    data = {
+        listCourse : await exports.getListCourseWithStatus(userId,'waiting')
+    }
+    return res.status(200).json(succseeMsg(data))
+}
+
+exports.getListCourseApprove = async (req,res,next) => {
+    userId = req.userData.id
+    data = {
+        listCourse : await exports.getListCourseWithStatus(userId,'approve')
+    }
+    return res.status(200).json(succseeMsg(data))
+}
+
+exports.checkValidUser = async (req, res, next) => {
+    users = await User.findAll({ where: { email: req.body.email } })
+    if(users.length!=1){
+        return res.status(200).json(failMsg('email is not exist'))
+    }
+    user = users[0]
+    passwordVaild = await bcrypt.compare(req.body.password,user.password)
+    if (!passwordVaild) {
+        return res.status(200).json(failMsg('Password is not valid'))
+    }
+    userInfo = exports.extractInfo(user)
+    const token = jwt.sign(userInfo,secrectKey,{expiresIn: '1h'})
+    userInfo.token = token
+    data = {
+        userInfo: userInfo
+    }
+    user.last_login = new Date().toISOString()
+    await user.save()
+    return res.status(200).json(succseeMsg(data))
+}
+
+exports.createUser = async  (req, res, next) => {
+    users = await User.findAll({ where: { email: req.body.email } })
+    if (users.length >= 1) {
+        return res.status(200).json(failMsg('Mail exists'))
+    }
+    hash = await bcrypt.hash(req.body.password,10)
+    const user = new User({
+        avt: req.body.avt,
+        email: req.body.email,
+        name: req.body.name,
+        username: req.body.username,
+        password: hash
+    })
+    result = await user.save()
+    res.status(200).json(succseeMsg())
+}

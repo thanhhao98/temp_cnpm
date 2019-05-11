@@ -1,23 +1,34 @@
-var bCrypt = require('bcrypt-nodejs');
+var bCrypt = require('bcrypt-nodejs')
 module.exports = {
-    isValidPassword: function(userpass,password){
-        return bCrypt.compareSync(password, userpass);
+    successMsg: (data=null) => {
+        if(data == null){
+            return {
+                isSuccessfully: true,
+            }
+        }
+        return {
+            isSuccessfully: true,
+            data: data,
+        }
     },
-    generateHash: function(password) {
-        return bCrypt.hashSync(password, bCrypt.genSaltSync(8), null);
+    failMsg: (msg) => {
+        return {
+            isSuccessfully: false,
+            message: msg
+        }
     },
     numShowPerPage: 40,
     categories: [
         'Development', 'Design', 'Bussiness', 'IT & Software', 'Personal Development', 'Marketing', 'Photography', 'Music'
     ],
     testDb : {
-        "username": "root",
-        "password": "Admin!123",
-        "database": "test",
-        "host": "mysql",
-        "port": "3306",
-        "dialect": "mysql"
+        'username': 'root',
+        'password': 'Admin!123',
+        'database': 'test',
+        'host': 'mysql',
+        'port': '3306',
+        'dialect': 'mysql'
     },
     PORT: process.env.PORT || 8080,
-    secrectKey: "Admin!123977463hao.phanthanh98@gmail.com",
-};
+    secrectKey: 'Admin!123977463hao.phanthanh98@gmail.com'
+}
