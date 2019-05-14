@@ -2,7 +2,6 @@ var exports = module.exports = {}
 const Course = require('../models/course')
 const numShowPerPage = require('../config/config').numShowPerPage
 const categories = require('../config/config').categories
-const secrectKey = require('../config/config').secrectKey
 const succseeMsg = require('../config/config').successMsg
 const failMsg = require('../config/config').failMsg
 
@@ -76,46 +75,22 @@ exports.getAllCourses = async (req,res,next) =>{
     return res.status(200).json(succseeMsg(data))
 }
 
-exports.createCourse =  (req, res, next) => {
-    Course.findAll({ where: { title: req.body.title } })
-    .then(courses=>{
-        if(courses.length>=1){
-            return res.status(200).json({
-                isSuccessfully: false,
-                message: "Course title exists"
-            })
-        }
-        adminId = req.userData.userId
-        adminName = req.userData.username
-        const course = new Course({
-            avt: adminName.charAt(0),
-            adminId: adminId,
-            name: adminName,
-            image: req.body.image,
-            title: req.body.title,
-            description: req.body.description,
-            category: req.body.category
-        })
-        course
-        .save()
-        .then(result => {
-                res.status(200).json({
-                    isSuccessfully: true,
-                    message: "Course created"
-            })
-        })
-        .catch(err => {
-            console.log(err)
-            res.status(500).json({
-                isSuccessfully: false,
-                error: err
-            })
-        })
-    }).catch(err=>{
-        console.log(err)
-        res.status(500).json({
-            isSuccessfully: false,
-            error: err
-        })
+exports.createCourse = async (req, res, next) => {
+    courses = await Course.findAll({ where: { title: req.body.title } })
+    if(courses.length>=1){
+        return res.status(200).json(failMsg('Course title exists'))
+    }
+    adminId = req.userData.userId
+    adminName = req.userData.username
+    const course = new Course({
+        avt: adminName.charAt(0),
+        adminId: adminId,
+        name: adminName,
+        image: req.body.image,
+        title: req.body.title,
+        description: req.body.description,
+        category: req.body.category
     })
+    await course.save()
+    res.status(200).json(succseeMsg())
 }

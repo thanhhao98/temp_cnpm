@@ -3,11 +3,9 @@ const bcrypt = require('bcrypt')
 const userController = require('../controller/user')
 const adminController = require('../controller/admin')
 const courseController = require('../controller/course')
-const forumController = require('../controller/forum')
 const videoController = require('../controller/video')
 const checkAuthAdmin = require('../middleware/admin-auth')
 const succseeMsg = require('../config/config').successMsg
-const failMsg = require('../config/config').failMsg
 
 // Sign
 router.put('/approveSign',checkAuthAdmin,adminController.approveSign)
@@ -20,15 +18,16 @@ router.post('/createCourse',checkAuthAdmin,courseController.createCourse)
 router.get('/listCourse',checkAuthAdmin,adminController.getCourseOfAdmin)
 router.get('/getAllVideoWithCourseId/:courseId',checkAuthAdmin,videoController.getAllVideoWithCourseId)
 
-
+// Document
+// router.post('/createDocument',checkAuthAdmin,adminController.createDocument)
 
 // Forum
-router.post('/createForum',checkAuthAdmin,forumController.createForum)
-router.get('/listForum',checkAuthAdmin,adminController.getForumOfAdmin)
+// router.post('/createForum',checkAuthAdmin,forumController.createForum)
+// router.get('/listForum',checkAuthAdmin,adminController.getForumOfAdmin)
 
 
 // Video
-router.post('/createVideo',checkAuthAdmin,videoController.createVideo)
+router.post('/createVideo',checkAuthAdmin,adminController.createVideo)
 
 
 // Auth

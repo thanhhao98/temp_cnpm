@@ -1,6 +1,5 @@
 var exports = module.exports = {}
 const User = require ("../models/user")
-const Course = require("../models/course")
 const UserAssignCourse = require("../models/userAssignCourse")
 const userController = require('./user')
 const courseController = require('./course')
@@ -15,6 +14,14 @@ exports.getStatus = async (signId) => {
     }
 }
 
+exports.checkUserApproveCourse = async (courseId,userId) => {
+    signs = await UserAssignCourse.findAll({where:{courseId:courseId,userId:userId,status:'approve'}})
+    if(signs.length == 1){
+        return true
+    } else {
+        return false
+    }
+}
 exports.getListCourseWithUserId = async (userId,status=null) => {
     console.log(status)
     listCourseId = []

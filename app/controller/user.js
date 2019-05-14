@@ -6,6 +6,7 @@ const secrectKey = require('../config/config').secrectKey
 const succseeMsg = require('../config/config').successMsg
 const failMsg = require('../config/config').failMsg
 const signController = require('./sign')
+const videoController = require('./video')
 const courseController = require('./course')
 
 exports.extractInfo =  (user) => {
@@ -81,6 +82,22 @@ exports.checkValidUser = async (req, res, next) => {
     user.last_login = new Date().toISOString()
     await user.save()
     return res.status(200).json(succseeMsg(data))
+}
+
+exports.viewCourse = async (req,res,next) => {
+    courseId = req.params.courseId
+    userId = req.userData.id
+    if (await signController.checkUserApproveCourse(courseId,userId)){
+        courseInfo = await courseController.getCourseWithId(courseId)
+        courseInfo = courseInfo[0]
+        data = {
+            courseInfo : courseInfo,
+            listVideo: await videoController.getAllVideoWithCourseId(courseId)
+        }
+        return res.status(200).json(succseeMsg(data))
+    } else {
+        return res.status(200).json(failMsg('user is not able to view this course'))
+    }
 }
 
 exports.createUser = async  (req, res, next) => {

@@ -5,3 +5,4 @@ dbBackup
 dataBackup
 npm-debug.log
 docker-compose.yml
+.vscode

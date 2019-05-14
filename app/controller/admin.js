@@ -3,14 +3,13 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const Admin = require('../models/admin')
 const Course = require('../models/course')
-const Forum = require ('../models/forum')
+// const Forum = require ('../models/forum')
 const secrectKey = require('../config/config').secrectKey
 const succseeMsg = require('../config/config').successMsg
 const failMsg = require('../config/config').failMsg
 const signController = require('./sign')
 const courseController = require('./course')
-
-// need to fix
+const videoController = require('./video')
 exports.extractInfo = async (admin)=>{
     return {
         id : admin.id,
@@ -22,29 +21,29 @@ exports.extractInfo = async (admin)=>{
 }
 
 // not ok
-exports.getForumOfAdmin = (req,res,next) =>{
-    id = req.userData.id
-    Forum.findAll({where: {adminId: id}})
-    .then(forums => {
-        forumList = []
-        for(i=0;i<forums.length;i++){
-            forum = forums[i]
-            forumList.push({
-                id: forum.id,
-                adminId: id,
-                name: forum.name,
-                description: forum.description,
-                date: forum.createdAt,
-            })
-        }
-        return res.status(200).json(succseeMsg(forumList))
+// exports.getForumOfAdmin = (req,res,next) =>{
+//     id = req.userData.id
+//     Forum.findAll({where: {adminId: id}})
+//     .then(forums => {
+//         forumList = []
+//         for(i=0;i<forums.length;i++){
+//             forum = forums[i]
+//             forumList.push({
+//                 id: forum.id,
+//                 adminId: id,
+//                 name: forum.name,
+//                 description: forum.description,
+//                 date: forum.createdAt,
+//             })
+//         }
+//         return res.status(200).json(succseeMsg(forumList))
 
-    })
-    .catch( error => {
-        console.log(error)
-        res.status(500).json(failMsg(error))
-    })
-}
+//     })
+//     .catch( error => {
+//         console.log(error)
+//         res.status(500).json(failMsg(error))
+//     })
+// }
 exports.getUserWaiting = async (req,res,next) => {
     adminId = req.userData.id
     listUserAssign = []
@@ -145,4 +144,29 @@ exports.createAdmin = async  (req, res, next) => {
     })
     result = await admin.save()
     res.status(200).json(succseeMsg())
+}
+
+// exports.createDocument = async (req,res,next) => {
+//     courseId = req.body.courseId
+//     if ( await courseController.getAdminId(courseId) != req.userData.id){
+//         return res.status(200).json(failMsg('Admin do not own this course'))
+//     }
+//     name =  req.body.name
+//     path =  req.body.path
+//     title =  req.body.title
+//     description =  req.body.description
+//     video = await videoController.createVideo(courseId,name,path,title,description)
+//     return res.status(200).json(succseeMsg())
+// }
+exports.createVideo = async (req,res,next) => {
+    courseId = req.body.courseId
+    if ( await courseController.getAdminId(courseId) != req.userData.id){
+        return res.status(200).json(failMsg('Admin do not own this course'))
+    }
+    name =  req.body.name
+    path =  req.body.path
+    title =  req.body.title
+    description =  req.body.description
+    video = await videoController.createVideo(courseId,name,path,title,description)
+    return res.status(200).json(succseeMsg())
 }

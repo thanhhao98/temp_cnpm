@@ -4,6 +4,10 @@ const checkAuthUser = require('../middleware/user-auth')
 const succseeMsg = require('../config/config').successMsg
 const failMsg = require('../config/config').failMsg
 
+
+// Video
+router.get('/viewCourse/:courseId',checkAuthUser,userController.viewCourse)
+
 // User
 router.get('/info',checkAuthUser,userController.getInfoUser)
 
