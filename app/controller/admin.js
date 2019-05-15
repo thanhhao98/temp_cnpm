@@ -11,6 +11,7 @@ const signController = require('./sign')
 const courseController = require('./course')
 const videoController = require('./video')
 const documentController = require('./document')
+const urlDocument = require('../config/config').urlDocument
 
 exports.extractInfo = async (admin)=>{
     return {

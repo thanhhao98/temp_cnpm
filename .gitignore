@@ -6,3 +6,4 @@ dataBackup
 npm-debug.log
 docker-compose.yml
 .vscode
+app/media

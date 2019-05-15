@@ -17,6 +17,9 @@ module.exports = {
             message: msg
         }
     },
+    pathToDocument : '/usr/src/project/app/media/document',
+    validDocument : ['pdf'],
+    urlDocument : 'http://localhost:8080/documents/',
     numShowPerPage: 40,
     categories: [
         'Development', 'Design', 'Bussiness', 'IT & Software', 'Personal Development', 'Marketing', 'Photography', 'Music'

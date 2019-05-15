@@ -1,60 +1,44 @@
-<<<<<<< Updated upstream
-const express = require('express');
-const bodyParser = require('body-parser');
-const app = express();
-const jwt = require('jsonwebtoken');
-const exphbs = require("express-handlebars");
-const passport     = require('passport');
-const flash        = require('connect-flash');
-const cookieParser = require('cookie-parser');
-const session      = require('express-session');
-const cors          = require('cors');
-// Constants
-const config = require('./app/config/config')
-const router = require('./app/routes/index');
-const userRoutes = require('./app/routes/user');
-const adminRoutes = require('./app/routes/admin');
-=======
 const express = require('express')
 const bodyParser = require('body-parser')
 const session      = require('express-session')
 
 // Constants
-const config = require('./app/config')
+const config = require('./app/config/config')
 const router = require('./app/routes/index')
 const userRoutes = require('./app/routes/user')
 const adminRoutes = require('./app/routes/admin')
->>>>>>> Stashed changes
+
+const app = express()
 
 // Static
 app.use('/documents', express.static('./app/media/document'));
 
 
 // App
-app.use(cors());
 
-//For BodyParser
+// For BodyParser
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-// For Passport
+// For sesion
 app.use(session({ secret: config.secrectKey,resave: true, saveUninitialized:true}));
-app.use(passport.initialize());
-app.use(passport.session());
 
 
-app.engine("handlebars", exphbs({defaultLayout: "main"}));
-app.set("view engine","handlebars");
-app.use(express.static("public"));
-app.use(session(config.session));
-app.use(passport.initialize());
-app.use(passport.session()); 
-app.use(flash());
-app.use(function(req, res, next) {
+
+app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    );
+    if (req.method === "OPTIONS") {
+      res.header("Access-Control-Allow-Methods", "PUT, POST, DELETE, GET");
+      return res.status(200).json({});
+    }
     next();
-});
+  });
+
+// Router
 app.use("/api/v1",router);
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/admin", adminRoutes);
