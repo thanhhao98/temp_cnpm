@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
@@ -13,6 +14,17 @@ const config = require('./app/config/config')
 const router = require('./app/routes/index');
 const userRoutes = require('./app/routes/user');
 const adminRoutes = require('./app/routes/admin');
+=======
+const express = require('express')
+const bodyParser = require('body-parser')
+const session      = require('express-session')
+
+// Constants
+const config = require('./app/config')
+const router = require('./app/routes/index')
+const userRoutes = require('./app/routes/user')
+const adminRoutes = require('./app/routes/admin')
+>>>>>>> Stashed changes
 
 // Static
 app.use('/documents', express.static('./app/media/document'));

@@ -154,11 +154,14 @@ exports.createDocument = async (req,res,next) => {
         return res.status(200).json(failMsg('Admin do not own this course'))
     }
     name =  req.body.name
-    path =  req.body.path
+    if(req.file == undefined){
+        return res.status(200).json(failMsg('Only pdf is valid'))
+    }
+    path =  urlDocument+req.file.filename
     title =  req.body.title
     description =  req.body.description
     if (await documentController.checkExitTitle(title,courseId)){
-        return res.status(200).json(failMsg('This title of is exist in course'))
+        return res.status(200).json(failMsg('This title of document is exist in course'))
     }
     await documentController.createDocument(courseId,name,path,title,description)
     return res.status(200).json(succseeMsg())
@@ -173,7 +176,7 @@ exports.createVideo = async (req,res,next) => {
     title =  req.body.title
     description =  req.body.description
     if (await videoController.checkExitTitle(title,courseId)){
-        return res.status(200).json(failMsg('This title of is exist in course'))
+        return res.status(200).json(failMsg('This title of video is exist in course'))
     }
     await videoController.createVideo(courseId,name,path,title,description)
     return res.status(200).json(succseeMsg())

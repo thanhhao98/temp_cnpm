@@ -1,6 +1,11 @@
 var exports = module.exports = {}
 const Document = require('../models/document')
 const multer = require('multer')
+<<<<<<< Updated upstream
+=======
+const pathToDocument = require('../config/config').pathToDocument
+const validDocument = require('../config/config').validDocument
+>>>>>>> Stashed changes
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
@@ -14,11 +19,14 @@ const storage = multer.diskStorage({
 })
 
 const fileFilter = (req, file, cb) => {
-    if (true) {
-        cb(null, true)
-    } else {
-        cb(null, false)
+    tokens = file.originalname.split('.')
+    if(tokens.length == 2){
+        extension = tokens[tokens.length-1]
+        if (validDocument.includes(extension)) {
+            return cb(null, true)
+        }
     }
+    return cb(null,false)
 }
 
 exports.uploadDocument = multer({
