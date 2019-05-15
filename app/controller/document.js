@@ -1,36 +1,5 @@
 var exports = module.exports = {}
 const Document = require('../models/document')
-const multer = require('multer')
-const pathToDocument = require('../config/config').pathToDocument
-const validDocument = require('../config/config').validDocument
-
-const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
-        cb(null,pathToDocument)
-    },
-    filename: function(req, file, cb) {
-        cb(null, new Date().toISOString() + file.originalname);
-    }
-})
-
-const fileFilter = (req, file, cb) => {
-    tokens = file.originalname.split('.')
-    if(tokens.length == 2){
-        extension = tokens[tokens.length-1]
-        if (validDocument.includes(extension)) {
-            return cb(null, true)
-        }
-    }
-    return cb(null,false)
-}
-
-exports.uploadDocument = multer({
-    storage: storage,
-    limits: {
-        fileSize: 1024 * 1024 * 5
-    },
-    fileFilter: fileFilter
-})
 
 exports.extractInfo = async (document) =>{
     return {

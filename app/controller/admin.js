@@ -12,6 +12,7 @@ const courseController = require('./course')
 const videoController = require('./video')
 const documentController = require('./document')
 const urlDocument = require('../config/config').urlDocument
+const urlImage = require('../config/config').urlImage
 
 exports.extractInfo = async (admin)=>{
     return {
@@ -133,13 +134,17 @@ exports.checkValidAdmin = async (req, res, next) => {
 }
 
 exports.createAdmin = async  (req, res, next) => {
+    avt = ''
+    if(req.file != undefined){
+        avt =  urlImage + req.file.filename
+    }
     admins = await Admin.findAll({ where: { email: req.body.email } })
     if (admins.length >= 1) {
         return res.status(200).json(failMsg('Mail exists'))
     }
     hash = await bcrypt.hash(req.body.password,10)
     const admin = new Admin({
-        avt: req.body.avt,
+        avt: avt,
         email: req.body.email,
         name: req.body.name,
         username: req.body.username,

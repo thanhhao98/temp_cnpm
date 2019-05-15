@@ -2,7 +2,7 @@ const router = require('express').Router()
 const userController = require('../controller/user')
 const checkAuthUser = require('../middleware/user-auth')
 const succseeMsg = require('../config/config').successMsg
-const failMsg = require('../config/config').failMsg
+const uploadImage = require('../controller/uploadFile').uploadImage
 
 
 // Video
@@ -18,7 +18,7 @@ router.post('/signCourse',checkAuthUser, userController.signCourse)
 
 // Auth
 router.post('/login', userController.checkValidUser)
-router.post('/signup', userController.createUser)
+router.post('/signup',uploadImage.single('avt'), userController.createUser)
 router.get('/logout',checkAuthUser,(req,res,next)=>{
     delete req.headers.authorization
     res.status(200).json(succseeMsg())

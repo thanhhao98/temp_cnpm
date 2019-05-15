@@ -17,9 +17,12 @@ module.exports = {
             message: msg
         }
     },
+    pathToImage : '/usr/src/project/app/media/image',
     pathToDocument : '/usr/src/project/app/media/document',
     validDocument : ['pdf'],
+    validImage : ['png','jpg','PNG','JPG'],
     urlDocument : 'http://localhost:8080/documents/',
+    urlImage:   'http://localhost:8080/images/',
     numShowPerPage: 40,
     categories: [
         'Development', 'Design', 'Bussiness', 'IT & Software', 'Personal Development', 'Marketing', 'Photography', 'Music'

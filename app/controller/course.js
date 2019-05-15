@@ -4,6 +4,7 @@ const numShowPerPage = require('../config/config').numShowPerPage
 const categories = require('../config/config').categories
 const succseeMsg = require('../config/config').successMsg
 const failMsg = require('../config/config').failMsg
+const urlImage = require('../config/config').urlImage
 
 exports.extractInfo = async (course) =>{
     return {
@@ -76,17 +77,20 @@ exports.getAllCourses = async (req,res,next) =>{
 }
 
 exports.createCourse = async (req, res, next) => {
+    if(req.file == undefined){
+        return res.status(200).json(failMsg('Image of course is require'))
+    }
+    image =  urlImage + req.file.filename
     courses = await Course.findAll({ where: { title: req.body.title } })
     if(courses.length>=1){
         return res.status(200).json(failMsg('Course title exists'))
     }
-    adminId = req.userData.userId
     adminName = req.userData.username
     const course = new Course({
         avt: adminName.charAt(0),
-        adminId: adminId,
+        adminId: req.userData.id,
         name: adminName,
-        image: req.body.image,
+        image: image,
         title: req.body.title,
         description: req.body.description,
         category: req.body.category

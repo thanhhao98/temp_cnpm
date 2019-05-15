@@ -12,6 +12,7 @@ const app = express()
 
 // Static
 app.use('/documents', express.static('./app/media/document'));
+app.use('/images', express.static('./app/media/image'));
 
 
 // App

@@ -6,6 +6,8 @@ const videoController = require('../controller/video')
 const documentController = require('../controller/document')
 const checkAuthAdmin = require('../middleware/admin-auth')
 const succseeMsg = require('../config/config').successMsg
+const uploadDocument = require('../controller/uploadFile').uploadDocument
+const uploadImage = require('../controller/uploadFile').uploadImage
 
 // Sign
 router.put('/approveSign',checkAuthAdmin,adminController.approveSign)
@@ -14,12 +16,12 @@ router.get('/listUserWaiting/',checkAuthAdmin,adminController.getUserWaiting)
 
 
 // Course
-router.post('/createCourse',checkAuthAdmin,courseController.createCourse)
+router.post('/createCourse',checkAuthAdmin,uploadImage.single('image'),courseController.createCourse)
 router.get('/listCourse',checkAuthAdmin,adminController.getCourseOfAdmin)
 router.get('/getAllVideoWithCourseId/:courseId',checkAuthAdmin,videoController.getAllVideoWithCourseId)
 
 // Document
-router.post('/createDocument',checkAuthAdmin,documentController.uploadDocument.single('document'),adminController.createDocument)
+router.post('/createDocument',checkAuthAdmin,uploadDocument.single('document'),adminController.createDocument)
 
 // Forum
 // router.post('/createForum',checkAuthAdmin,forumController.createForum)
@@ -32,7 +34,7 @@ router.post('/createVideo',checkAuthAdmin,adminController.createVideo)
 
 // Auth
 router.post('/login', adminController.checkValidAdmin)
-router.post('/signup', adminController.createAdmin)
+router.post('/signup',uploadImage.single('avt'), adminController.createAdmin)
 router.get('/info',checkAuthAdmin,adminController.getInfoAdmin)
 router.get('/logout',checkAuthAdmin,(req,res,next)=>{
   delete req.headers.authorization

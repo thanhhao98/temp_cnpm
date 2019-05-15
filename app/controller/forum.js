@@ -10,7 +10,7 @@ const Forum = require('../models/forum')
 //                 message: 'Forum name exists'
 //             });
 //         }
-//         adminId = req.userData.userId;
+//         adminId = req.userData.id;
 //         const forum = new Forum({
 //             adminId: adminId,
 //             name: req.body.name,

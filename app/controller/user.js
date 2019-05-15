@@ -9,6 +9,7 @@ const signController = require('./sign')
 const videoController = require('./video')
 const courseController = require('./course')
 const documentController = require('./document')
+const urlImage = require('../config/config').urlImage
 
 exports.extractInfo =  (user) => {
     return {
@@ -103,13 +104,17 @@ exports.viewCourse = async (req,res,next) => {
 }
 
 exports.createUser = async  (req, res, next) => {
+    avt = ''
+    if(req.file != undefined){
+        avt =  urlImage + req.file.filename
+    }
     users = await User.findAll({ where: { email: req.body.email } })
     if (users.length >= 1) {
         return res.status(200).json(failMsg('Mail exists'))
     }
     hash = await bcrypt.hash(req.body.password,10)
     const user = new User({
-        avt: req.body.avt,
+        avt: avt,
         email: req.body.email,
         name: req.body.name,
         username: req.body.username,
