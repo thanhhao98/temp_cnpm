@@ -11,6 +11,7 @@ const signController = require('./sign')
 const courseController = require('./course')
 const videoController = require('./video')
 const documentController = require('./document')
+const urlDocument = require('../config/config').urlToDocument
 
 exports.extractInfo = async (admin)=>{
     return {
@@ -154,7 +155,7 @@ exports.createDocument = async (req,res,next) => {
         return res.status(200).json(failMsg('Admin do not own this course'))
     }
     name =  req.body.name
-    path =  req.body.path
+    path =  urlDocument+req.file.filename
     title =  req.body.title
     description =  req.body.description
     if (await documentController.checkExitTitle(title,courseId)){
