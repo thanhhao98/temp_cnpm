@@ -14,6 +14,9 @@ const router = require('./app/routes/index');
 const userRoutes = require('./app/routes/user');
 const adminRoutes = require('./app/routes/admin');
 
+// Static
+app.use('/documents', express.static('./app/media/document'));
+
 
 // App
 app.use(cors());

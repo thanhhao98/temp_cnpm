@@ -1,9 +1,9 @@
 const router = require('express').Router()
 const bcrypt = require('bcrypt')
-const userController = require('../controller/user')
 const adminController = require('../controller/admin')
 const courseController = require('../controller/course')
 const videoController = require('../controller/video')
+const documentController = require('../controller/document')
 const checkAuthAdmin = require('../middleware/admin-auth')
 const succseeMsg = require('../config/config').successMsg
 
@@ -19,7 +19,8 @@ router.get('/listCourse',checkAuthAdmin,adminController.getCourseOfAdmin)
 router.get('/getAllVideoWithCourseId/:courseId',checkAuthAdmin,videoController.getAllVideoWithCourseId)
 
 // Document
-// router.post('/createDocument',checkAuthAdmin,adminController.createDocument)
+router.post('/createDocument',checkAuthAdmin,adminController.createDocument)
+//router.post('/createDocument',checkAuthAdmin,documentController.uploadDocument.single('document'),adminController.createDocument)
 
 // Forum
 // router.post('/createForum',checkAuthAdmin,forumController.createForum)
@@ -44,7 +45,5 @@ router.get('/logout',checkAuthAdmin,(req,res,next)=>{
 router.post('/private',checkAuthAdmin,(req,res,next)=>{
   res.status(200).send(succseeMsg())
 })
-
-
 
 module.exports = router

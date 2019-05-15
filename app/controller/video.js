@@ -14,11 +14,21 @@ exports.getAllVideoWithCourseId = async (courseId) => {
 
 exports.extractInfo = async (video) =>{
     return {
+        id: video.id,
         courseId: video.courseId,
         name: video.name,
         path: video.path,
         title: video.title,
         description: video.description,
+    }
+}
+
+exports.checkExitTitle = async (title,courseId) => {
+    videos = await Video.findAll({where: {courseId:courseId,title:title}})
+    if(videos.length > 0){
+        return true
+    } else {
+        return false
     }
 }
 exports.createVideo =  async (courseId,name, path, title, description) => {

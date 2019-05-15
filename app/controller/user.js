@@ -8,6 +8,7 @@ const failMsg = require('../config/config').failMsg
 const signController = require('./sign')
 const videoController = require('./video')
 const courseController = require('./course')
+const documentController = require('./document')
 
 exports.extractInfo =  (user) => {
     return {
@@ -92,6 +93,7 @@ exports.viewCourse = async (req,res,next) => {
         courseInfo = courseInfo[0]
         data = {
             courseInfo : courseInfo,
+            listDocument : await documentController.getAllDocumentWithCourseId(courseId),
             listVideo: await videoController.getAllVideoWithCourseId(courseId)
         }
         return res.status(200).json(succseeMsg(data))

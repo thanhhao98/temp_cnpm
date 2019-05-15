@@ -10,6 +10,8 @@ const failMsg = require('../config/config').failMsg
 const signController = require('./sign')
 const courseController = require('./course')
 const videoController = require('./video')
+const documentController = require('./document')
+
 exports.extractInfo = async (admin)=>{
     return {
         id : admin.id,
@@ -146,18 +148,21 @@ exports.createAdmin = async  (req, res, next) => {
     res.status(200).json(succseeMsg())
 }
 
-// exports.createDocument = async (req,res,next) => {
-//     courseId = req.body.courseId
-//     if ( await courseController.getAdminId(courseId) != req.userData.id){
-//         return res.status(200).json(failMsg('Admin do not own this course'))
-//     }
-//     name =  req.body.name
-//     path =  req.body.path
-//     title =  req.body.title
-//     description =  req.body.description
-//     video = await videoController.createVideo(courseId,name,path,title,description)
-//     return res.status(200).json(succseeMsg())
-// }
+exports.createDocument = async (req,res,next) => {
+    courseId = req.body.courseId
+    if ( await courseController.getAdminId(courseId) != req.userData.id){
+        return res.status(200).json(failMsg('Admin do not own this course'))
+    }
+    name =  req.body.name
+    path =  req.body.path
+    title =  req.body.title
+    description =  req.body.description
+    if (await documentController.checkExitTitle(title,courseId)){
+        return res.status(200).json(failMsg('This title of is exist in course'))
+    }
+    await documentController.createDocument(courseId,name,path,title,description)
+    return res.status(200).json(succseeMsg())
+}
 exports.createVideo = async (req,res,next) => {
     courseId = req.body.courseId
     if ( await courseController.getAdminId(courseId) != req.userData.id){
@@ -167,6 +172,9 @@ exports.createVideo = async (req,res,next) => {
     path =  req.body.path
     title =  req.body.title
     description =  req.body.description
-    video = await videoController.createVideo(courseId,name,path,title,description)
+    if (await videoController.checkExitTitle(title,courseId)){
+        return res.status(200).json(failMsg('This title of is exist in course'))
+    }
+    await videoController.createVideo(courseId,name,path,title,description)
     return res.status(200).json(succseeMsg())
 }
