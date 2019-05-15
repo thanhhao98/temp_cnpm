@@ -1,14 +1,15 @@
 var exports = module.exports = {}
 const Document = require('../models/document')
 const multer = require('multer')
-const pathToDocument = require('../config/config').pathToDocument
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
-        cb(null, pathToDocument)
+        console.log('ok')
+        cb(null, '../media/document')
+        console.log('ok1')
     },
     filename: function(req, file, cb) {
-        cb(null, new Date().toISOString() + file.originalname)
+        cb(null, new Date().toISOString() + file.originalname);
     }
 })
 

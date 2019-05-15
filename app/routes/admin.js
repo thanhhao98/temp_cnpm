@@ -19,8 +19,8 @@ router.get('/listCourse',checkAuthAdmin,adminController.getCourseOfAdmin)
 router.get('/getAllVideoWithCourseId/:courseId',checkAuthAdmin,videoController.getAllVideoWithCourseId)
 
 // Document
-// router.post('/createDocument',checkAuthAdmin,adminController.createDocument)
-router.post('/createDocument',checkAuthAdmin,documentController.uploadDocument.single('document'),adminController.createDocument)
+router.post('/createDocument',checkAuthAdmin,adminController.createDocument)
+//router.post('/createDocument',checkAuthAdmin,documentController.uploadDocument.single('document'),adminController.createDocument)
 
 // Forum
 // router.post('/createForum',checkAuthAdmin,forumController.createForum)
