@@ -10,6 +10,7 @@ exports.extractInfo = async (course) =>{
     return {
         id: course.id,
         category: course.category,
+        description: course.description,
         avatar: course.avt,
         name: course.name,
         date: course.createdAt,
