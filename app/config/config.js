@@ -35,6 +35,14 @@ module.exports = {
         'port': '3306',
         'dialect': 'mysql'
     },
+    herokuDb : {
+        'username': 'uptyjqmjjrlklv',
+        'password': '0e2f7be9303bcabbce744d35e818ca48938ec2c79ad9e0af19b6871fc96a7514',
+        'database': 'd16fh21djnvm3c',
+        'host': 'ec2-184-72-237-95.compute-1.amazonaws.com',
+        'port': '5432',
+        'dialect': 'postgres'
+    },
     PORT: process.env.PORT || 8080,
     secrectKey: 'Admin!123977463hao.phanthanh98@gmail.com'
 }
