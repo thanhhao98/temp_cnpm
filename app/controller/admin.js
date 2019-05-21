@@ -136,7 +136,7 @@ exports.checkValidAdmin = async (req, res, next) => {
 exports.createAdmin = async  (req, res, next) => {
     avt = ''
     if(req.file != undefined){
-        avt =  urlImage + req.file.filename
+        avt =  urlImage + '/' + req.file.filename
     }
     admins = await Admin.findAll({ where: { email: req.body.email } })
     if (admins.length >= 1) {
@@ -163,7 +163,7 @@ exports.createDocument = async (req,res,next) => {
     if(req.file == undefined){
         return res.status(200).json(failMsg('Only pdf is valid'))
     }
-    path =  urlDocument+req.file.filename
+    path =  urlDocument+'/'+req.file.filename
     title =  req.body.title
     description =  req.body.description
     if (await documentController.checkExitTitle(title,courseId)){

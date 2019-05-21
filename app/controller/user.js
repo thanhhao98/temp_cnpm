@@ -106,7 +106,7 @@ exports.viewCourse = async (req,res,next) => {
 exports.createUser = async  (req, res, next) => {
     avt = ''
     if(req.file != undefined){
-        avt =  urlImage + req.file.filename
+        avt =  urlImage + '/' + req.file.filename
     }
     users = await User.findAll({ where: { email: req.body.email } })
     if (users.length >= 1) {

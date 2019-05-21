@@ -17,12 +17,12 @@ module.exports = {
             message: msg
         }
     },
-    pathToImage : '/usr/src/project/app/media/image',
-    pathToDocument : '/usr/src/project/app/media/document',
+    pathToImage : process.cwd()+'/app/media/image',
+    pathToDocument : process.cwd()+'/app/media/document',
     validDocument : ['pdf'],
     validImage : ['png','jpg','PNG','JPG'],
-    urlDocument : 'http://localhost:8080/documents/',
-    urlImage:   'http://localhost:8080/images/',
+    urlDocument : '/documents',
+    urlImage:   '/images',
     numShowPerPage: 40,
     categories: [
         'Development', 'Design', 'Bussiness', 'IT & Software', 'Personal Development', 'Marketing', 'Photography', 'Music'
@@ -36,12 +36,14 @@ module.exports = {
         'dialect': 'mysql'
     },
     herokuDb : {
-        'username': 'uptyjqmjjrlklv',
-        'password': '0e2f7be9303bcabbce744d35e818ca48938ec2c79ad9e0af19b6871fc96a7514',
-        'database': 'd16fh21djnvm3c',
-        'host': 'ec2-184-72-237-95.compute-1.amazonaws.com',
-        'port': '5432',
-        'dialect': 'postgres'
+        url: 'postgres://uptyjqmjjrlklv:0e2f7be9303bcabbce744d35e818ca48938ec2c79ad9e0af19b6871fc96a7514@ec2-184-72-237-95.compute-1.amazonaws.com:5432/d16fh21djnvm3c',
+        config: {
+            dialect: 'postgres',
+            protocol: 'postgres',
+            dialectOptions: {
+                ssl: true
+            }
+        }
     },
     PORT: process.env.PORT || 8080,
     secrectKey: 'Admin!123977463hao.phanthanh98@gmail.com'

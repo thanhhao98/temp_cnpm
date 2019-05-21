@@ -81,7 +81,7 @@ exports.createCourse = async (req, res, next) => {
     if(req.file == undefined){
         return res.status(200).json(failMsg('Image of course is require'))
     }
-    image =  urlImage + req.file.filename
+    image =  urlImage + '/' + req.file.filename
     courses = await Course.findAll({ where: { title: req.body.title } })
     if(courses.length>=1){
         return res.status(200).json(failMsg('Course title exists'))
