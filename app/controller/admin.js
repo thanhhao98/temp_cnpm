@@ -143,13 +143,6 @@ exports.createAdmin = async  (req, res, next) => {
         return res.status(200).json(failMsg('Mail exists'))
     }
     hash = await bcrypt.hash(req.body.password,10)
-    console.log({
-        avt: avt,
-        email: req.body.email,
-        name: req.body.name,
-        username: req.body.username,
-        password: hash
-    })
     const admin = new Admin({
         avt: avt,
         email: req.body.email,
